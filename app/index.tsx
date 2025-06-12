@@ -3,12 +3,16 @@ import React, { useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { CommunityMap } from '../src/components/Map';
 import { CONFIG } from '../src/constants/config';
 import { useLocation } from '../src/hooks/useLocation';
+import { useReports } from '../src/hooks/useReports';
+import type { CommunityReport } from '../src/services/Report/ReportService';
 
 export default function HomeScreen() {
   const { location, loading, error, refreshLocation } = useLocation();
-  const [reports, setReports] = useState([]);
+  const { reports, loading: reportsLoading, generateSampleData, clearAllData } = useReports();
+  const [showMap, setShowMap] = useState(true);
 
   const handleReportPress = () => {
     if (!location) {
@@ -31,12 +35,69 @@ export default function HomeScreen() {
     Alert.alert('Settings', 'Privacy settings screen coming soon!');
   };
 
+  const handleDeveloperMenu = () => {
+    if (!__DEV__) return;
+    
+    Alert.alert(
+      'Developer Tools',
+      'Choose an action for testing:',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { 
+          text: 'Generate Sample Reports', 
+          onPress: () => location && generateSampleData(location)
+        },
+        { 
+          text: 'Clear All Data', 
+          style: 'destructive',
+          onPress: clearAllData
+        },
+        { 
+          text: 'Toggle Map', 
+          onPress: () => setShowMap(!showMap)
+        }
+      ]
+    );
+  };
+
+  const getRecentReports = () => {
+    if (!location) return [];
+    
+    // Filter reports to only show those within alert radius
+    return reports
+      .filter(report => {
+        if (!location?.latitude || !location?.longitude) return false;
+        // This is a simplified distance check - in production you'd use the LocationService
+        const latDiff = Math.abs(report.location.latitude - location.latitude);
+        const lonDiff = Math.abs(report.location.longitude - location.longitude);
+        const roughDistance = Math.sqrt(latDiff * latDiff + lonDiff * lonDiff);
+        return roughDistance < 0.1; // Rough approximation of 8km
+      })
+      .slice(0, 5) // Show last 5 reports
+      .map(report => ({
+        type: report.type.replace('_', ' ').toUpperCase(),
+        timeAgo: getTimeAgo(report.timestamp),
+        priority: report.priority,
+        verified: report.verified
+      }));
+  };
+
+  const getTimeAgo = (timestamp: number) => {
+    const ageHours = (Date.now() - timestamp) / (1000 * 60 * 60);
+    if (ageHours < 1) return `${Math.round(ageHours * 60)}m ago`;
+    return `${Math.round(ageHours)}h ago`;
+  };
+
+  const recentReports = getRecentReports();
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView style={styles.scrollView}>
         {/* Header */}
         <View style={styles.header}>
-          <Text style={styles.title}>ICE Community Alert</Text>
+          <TouchableOpacity onPress={handleDeveloperMenu} disabled={!__DEV__}>
+            <Text style={styles.title}>Compass Community</Text>
+          </TouchableOpacity>
           <TouchableOpacity 
             style={styles.settingsButton}
             onPress={handleSettingsPress}
@@ -64,7 +125,7 @@ export default function HomeScreen() {
                 ✓ Location services active
               </Text>
               <Text style={styles.statusSubtext}>
-                Anonymized to protect your privacy
+                Anonymized to protect your privacy • {reports.length} community reports active
               </Text>
             </View>
           ) : (
@@ -88,16 +149,39 @@ export default function HomeScreen() {
           )}
         </View>
 
-        {/* Map Placeholder */}
-        <View style={styles.mapPlaceholder}>
-          <Ionicons name="map-outline" size={48} color="#666" />
-          <Text style={styles.mapPlaceholderText}>
-            Interactive map will load here
-          </Text>
-          <Text style={styles.mapPlaceholderSubtext}>
-            Shows anonymized community alerts within {CONFIG.ALERT_RADIUS_KM}km
-          </Text>
-        </View>
+        {/* Community Map */}
+        {showMap && location ? (
+          <View style={styles.mapContainer}>
+            <CommunityMap
+              userLocation={location}
+              reports={reports}
+              onReportPress={(report: CommunityReport) => {
+                Alert.alert(
+                  'Community Report',
+                  `${report.type.replace('_', ' ').toUpperCase()}\n\nReported ${getTimeAgo(report.timestamp)}\n${report.verified ? 'Verified by community' : 'Unverified report'}`,
+                  [{ text: 'OK' }]
+                );
+              }}
+              showAlertRadius={true}
+              style={styles.map}
+            />
+            <View style={styles.mapOverlay}>
+              <Text style={styles.mapStatus}>
+                {reportsLoading ? 'Loading reports...' : `${reports.length} active reports`}
+              </Text>
+            </View>
+          </View>
+        ) : (
+          <View style={styles.mapPlaceholder}>
+            <Ionicons name="map-outline" size={48} color="#666" />
+            <Text style={styles.mapPlaceholderText}>
+              {location ? 'Interactive map will load here' : 'Enable location to view community map'}
+            </Text>
+            <Text style={styles.mapPlaceholderSubtext}>
+              Shows anonymized community alerts within {CONFIG.ALERT_RADIUS_KM}km
+            </Text>
+          </View>
+        )}
 
         {/* Privacy Features */}
         <View style={styles.privacyCard}>
@@ -123,15 +207,25 @@ export default function HomeScreen() {
         {/* Recent Reports */}
         <View style={styles.reportsCard}>
           <Text style={styles.reportsTitle}>Recent Community Reports</Text>
-          {reports.length === 0 ? (
+          {recentReports.length === 0 ? (
             <Text style={styles.noReportsText}>
               No recent reports in your area
             </Text>
           ) : (
-            reports.map((report, index) => (
+            recentReports.map((report, index) => (
               <View key={index} style={styles.reportItem}>
-                <Text style={styles.reportText}>{report.type}</Text>
-                <Text style={styles.reportTime}>{report.timeAgo}</Text>
+                <View style={styles.reportContent}>
+                  <Text style={styles.reportText}>{report.type}</Text>
+                  {report.verified && (
+                    <Ionicons name="checkmark-circle" size={14} color="#4CAF50" />
+                  )}
+                </View>
+                <Text style={[
+                  styles.reportTime,
+                  report.priority === 'high' && { color: '#f44336' }
+                ]}>
+                  {report.timeAgo}
+                </Text>
               </View>
             ))
           )}
@@ -220,6 +314,34 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
   },
+  mapContainer: {
+    backgroundColor: '#2a2a2a',
+    marginHorizontal: 15,
+    borderRadius: 15,
+    overflow: 'hidden',
+    height: 300,
+    marginBottom: 15,
+  },
+  map: {
+    height: 300,
+  },
+  mapOverlay: {
+    position: 'absolute',
+    top: 10,
+    left: 10,
+    right: 10,
+    backgroundColor: 'rgba(42, 42, 42, 0.9)',
+    borderRadius: 8,
+    padding: 8,
+    borderWidth: 1,
+    borderColor: '#444',
+  },
+  mapStatus: {
+    color: '#fff',
+    fontSize: 12,
+    fontWeight: '600',
+    textAlign: 'center',
+  },
   mapPlaceholder: {
     backgroundColor: '#2a2a2a',
     marginHorizontal: 15,
@@ -286,9 +408,15 @@ const styles = StyleSheet.create({
   reportItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
     paddingVertical: 8,
     borderBottomWidth: 1,
     borderBottomColor: '#444',
+  },
+  reportContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
   },
   reportText: {
     color: '#ccc',

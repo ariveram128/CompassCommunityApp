@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { LocationService } from '../services/Location/LocationService';
 
 export function useLocation() {
@@ -38,11 +38,18 @@ export function useLocation() {
     }
   }, []);
 
-  const startWatching = useCallback(() => {
-    return LocationService.startWatching((newLocation) => {
-      setLocation(newLocation);
-      setError(null);
-    });
+  const startWatching = useCallback(async () => {
+    try {
+      const cleanup = await LocationService.startWatching((newLocation) => {
+        setLocation(newLocation);
+        setError(null);
+      });
+      return cleanup;
+    } catch (err) {
+      console.error('Error starting location watch:', err);
+      setError(err.message);
+      return () => {}; // Return empty cleanup function
+    }
   }, []);
 
   // Initialize location on mount
@@ -54,10 +61,11 @@ export function useLocation() {
         const perms = await requestPermissions();
         if (perms.foreground) {
           await refreshLocation();
-          cleanupWatcher = startWatching();
+          cleanupWatcher = await startWatching();
         }
       } catch (err) {
         console.error('Failed to initialize location:', err);
+        setError(err.message);
       }
     };
 
@@ -65,7 +73,7 @@ export function useLocation() {
 
     // Cleanup on unmount
     return () => {
-      if (cleanupWatcher) {
+      if (cleanupWatcher && typeof cleanupWatcher === 'function') {
         cleanupWatcher();
       }
     };

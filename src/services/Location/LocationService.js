@@ -33,6 +33,37 @@ export class LocationService {
     return this.anonymizeLocation(location.coords);
   }
 
+  static startWatching(callback) {
+    // Watch position changes for community alerts
+    const watchLocation = async () => {
+      try {
+        const subscription = await Location.watchPositionAsync(
+          {
+            accuracy: Location.Accuracy.Balanced,
+            timeInterval: CONFIG.LOCATION_UPDATE_INTERVAL || 300000, // 5 minutes default
+            distanceInterval: 100, // Update every 100m
+          },
+          (location) => {
+            const anonymizedLocation = this.anonymizeLocation(location.coords);
+            callback(anonymizedLocation);
+          }
+        );
+
+        // Return cleanup function
+        return () => {
+          if (subscription) {
+            subscription.remove();
+          }
+        };
+      } catch (error) {
+        console.error('Error watching location:', error);
+        return () => {}; // Return empty cleanup function
+      }
+    };
+
+    return watchLocation();
+  }
+
   static anonymizeLocation(coords) {
     // Reduce precision for privacy - rounds to ~100m grid
     const precision = CONFIG.LOCATION_PRECISION;

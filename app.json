@@ -1,11 +1,13 @@
 {
   "expo": {
-    "name": "ICE Community Alert",
-    "slug": "ice-community-alert",
+    "name": "Compass Community",
+    "slug": "compass-community",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
-    "userInterfaceStyle": "automatic",
+    "icon": "./assets/images/icon.png",
+    "scheme": "compass-community",
+    "userInterfaceStyle": "dark",
+    "newArchEnabled": true,
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
@@ -15,20 +17,19 @@
       "**/*"
     ],
     "ios": {
+      "bundleIdentifier": "org.community.compass",
       "supportsTablet": true,
-      "bundleIdentifier": "com.community.ice-alert",
       "infoPlist": {
-        "NSLocationWhenInUseUsageDescription": "This app needs location access to show nearby community safety alerts",
-        "NSLocationAlwaysAndWhenInUseUsageDescription": "This app needs background location access to send safety alerts when you're in affected areas",
-        "NSUserTrackingUsageDescription": "This app does not track users. Location is used only for anonymous safety alerts."
+        "NSLocationWhenInUseUsageDescription": "This app uses location to provide community safety alerts in your area.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "This app uses background location to send emergency alerts when ICE activity is reported nearby."
       }
     },
     "android": {
+      "package": "org.community.compass",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#1a1a1a"
+        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
       },
-      "package": "com.community.icealert",
       "permissions": [
         "ACCESS_FINE_LOCATION",
         "ACCESS_BACKGROUND_LOCATION",
@@ -36,19 +37,26 @@
       ]
     },
     "web": {
-      "favicon": "./assets/favicon.png",
-      "bundler": "metro"
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
+      "expo-router",
       [
         "expo-location",
         {
-          "locationAlwaysAndWhenInUsePermission": "This app needs location access to provide safety alerts.",
+          "locationAlwaysAndWhenInUsePermission": "Allow Compass Community to use your location to provide safety alerts in your area.",
+          "locationAlwaysPermission": "Allow Compass Community to use your location in the background to send emergency alerts when activity is reported nearby.",
+          "locationWhenInUsePermission": "Allow Compass Community to use your location to provide safety alerts in your area.",
+          "isIosBackgroundLocationEnabled": true,
           "isAndroidBackgroundLocationEnabled": true
         }
-      ],
-      "expo-secure-store"
+      ]
     ],
+    "experiments": {
+      "typedRoutes": true
+    },
     "extra": {
       "eas": {
         "projectId": "your-project-id-here"
