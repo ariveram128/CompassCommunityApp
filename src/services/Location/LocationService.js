@@ -1,6 +1,5 @@
 import * as Location from 'expo-location';
-import * as Device from 'expo-device';
-import { CONFIG } from '../constants/config';
+import { CONFIG } from '../../constants/config.js';
 
 export class LocationService {
   static async requestPermissions() {
