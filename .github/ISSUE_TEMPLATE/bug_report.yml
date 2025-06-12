@@ -1,0 +1,116 @@
+name: 🐛 Bug Report
+description: Report a bug to help us improve community safety features
+title: "[BUG] "
+labels: ["bug", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for reporting a bug! This helps keep our community safety app reliable.
+        
+        **⚠️ PRIVACY WARNING**: Never include real location data, personal information, or screenshots with identifiable information.
+
+  - type: checkboxes
+    id: privacy-check
+    attributes:
+      label: Privacy Verification
+      description: Confirm you're not sharing sensitive information
+      options:
+        - label: I have not included any real location data, personal information, or identifiable screenshots
+          required: true
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Bug Severity
+      description: How severe is this bug for community safety?
+      options:
+        - Critical (Affects user safety or privacy)
+        - High (Core feature not working)
+        - Medium (Feature partially working)
+        - Low (UI/UX issue)
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: Clear description of what happened
+      placeholder: Describe the bug and its impact on community safety features
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to Reproduce
+      description: How can we reproduce this bug?
+      placeholder: |
+        1. Open the app
+        2. Navigate to...
+        3. Tap on...
+        4. See error...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What should have happened?
+      placeholder: Describe what you expected to happen
+    validations:
+      required: true
+
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      description: Which platform(s) are affected?
+      multiple: true
+      options:
+        - Android
+        - iOS
+        - Web
+    validations:
+      required: true
+
+  - type: input
+    id: device
+    attributes:
+      label: Device Information
+      description: Device model and OS version (no serial numbers or identifiers)
+      placeholder: "Example: Samsung Galaxy S21, Android 12"
+    validations:
+      required: true
+
+  - type: input
+    id: app-version
+    attributes:
+      label: App Version
+      description: What version of the app are you using?
+      placeholder: "Example: 0.1.0"
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Any other information that might help (screenshots without personal data, error messages, etc.)
+      placeholder: Add any other context about the problem here
+
+  - type: checkboxes
+    id: impact
+    attributes:
+      label: Impact Areas
+      description: Which areas of the app are affected? (Check all that apply)
+      options:
+        - label: Location services/permissions
+        - label: Anonymous reporting
+        - label: Notifications/alerts
+        - label: Map functionality
+        - label: Privacy settings
+        - label: App performance/battery
+        - label: UI/Accessibility
