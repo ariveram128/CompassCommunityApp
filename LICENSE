@@ -1,0 +1,73 @@
+MIT License
+
+Copyright (c) 2025 ICE Community Alert Contributors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+## Additional Terms for Community Safety Software
+
+While this software is licensed under the permissive MIT License to maximize
+accessibility for community organizations and legal aid groups, we strongly
+encourage all users and contributors to adhere to the following principles:
+
+### Ethical Use Guidelines
+
+**Community Safety First**: This software is designed to enhance community
+safety and protect vulnerable populations. We encourage use cases that align
+with these values.
+
+**Privacy Protection**: Maintain the privacy-first architecture and zero-knowledge
+principles that protect user anonymity and safety.
+
+**Community Benefit**: Consider the impact on immigrant communities and ensure
+any modifications or derivative works continue to serve community protection goals.
+
+**Transparency**: When distributing this software, maintain clear documentation
+about data handling, privacy protections, and intended use cases.
+
+### Recommended Attribution
+
+When using or distributing this software, please consider including:
+
+"Based on ICE Community Alert - Privacy-first community safety software
+designed to protect immigrant communities through anonymous reporting and
+emergency response coordination."
+
+### Contact for Community Use
+
+Community organizations, legal aid groups, and advocacy organizations seeking
+to deploy or modify this software for community protection are encouraged to
+reach out for support and collaboration:
+
+- Community Support: <community@community-alert.org>
+- Technical Assistance: <tech@community-alert.org>
+- Legal Aid Integration: <legal@community-alert.org>
+
+### Disclaimer
+
+This software is provided as a tool for community safety and information sharing.
+Users are responsible for understanding and complying with local laws and
+regulations. The software does not constitute legal advice, and users should
+consult with qualified legal professionals for legal guidance.
+
+The developers and contributors make no warranties about the effectiveness of
+this software for any particular use case and disclaim any liability for
+consequences arising from its use.
