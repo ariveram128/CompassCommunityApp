@@ -1,29 +1,65 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import 'react-native-reanimated';
-
-import { useColorScheme } from '@/hooks/useColorScheme';
+import { useEffect } from 'react';
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
-  const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-  });
+  useEffect(() => {
+    // Initialize core services on app start
+    const initializeServices = async () => {
+      try {
+        // Import services dynamically to avoid circular dependencies
+        const { NotificationService } = await import('../src/services/Notification/NotificationService');
+        await NotificationService.initialize();
+        console.log('App services initialized');
+      } catch (error) {
+        console.error('Failed to initialize app services:', error);
+      }
+    };
 
-  if (!loaded) {
-    // Async font loading only occurs in development.
-    return null;
-  }
+    initializeServices();
+  }, []);
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
+    <>
+      <StatusBar style="light" backgroundColor="#1a1a1a" />
+      <Stack
+        screenOptions={{
+          headerStyle: {
+            backgroundColor: '#1a1a1a',
+          },
+          headerTintColor: '#fff',
+          headerTitleStyle: {
+            fontWeight: 'bold',
+          },
+        }}
+      >
+        <Stack.Screen 
+          name="index" 
+          options={{ 
+            title: 'ICE Community Alert',
+            headerShown: false 
+          }} 
+        />
+        <Stack.Screen 
+          name="report" 
+          options={{ 
+            title: 'Submit Report',
+            presentation: 'modal',
+            headerStyle: {
+              backgroundColor: '#2a2a2a',
+            }
+          }} 
+        />
+        <Stack.Screen 
+          name="settings" 
+          options={{ 
+            title: 'Privacy Settings',
+            headerStyle: {
+              backgroundColor: '#2a2a2a',
+            }
+          }} 
+        />
       </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+    </>
   );
 }

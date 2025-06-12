@@ -1,42 +1,58 @@
 {
   "expo": {
-    "name": "CompassCommunityApp",
-    "slug": "CompassCommunityApp",
+    "name": "ICE Community Alert",
+    "slug": "ice-community-alert",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
-    "scheme": "compasscommunityapp",
+    "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#1a1a1a"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.community.ice-alert",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "This app needs location access to show nearby community safety alerts",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "This app needs background location access to send safety alerts when you're in affected areas",
+        "NSUserTrackingUsageDescription": "This app does not track users. Location is used only for anonymous safety alerts."
+      }
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#1a1a1a"
       },
-      "edgeToEdgeEnabled": true
+      "package": "com.community.icealert",
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_BACKGROUND_LOCATION",
+        "RECEIVE_BOOT_COMPLETED"
+      ]
     },
     "web": {
-      "bundler": "metro",
-      "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro"
     },
     "plugins": [
-      "expo-router",
       [
-        "expo-splash-screen",
+        "expo-location",
         {
-          "image": "./assets/images/splash-icon.png",
-          "imageWidth": 200,
-          "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
+          "locationAlwaysAndWhenInUsePermission": "This app needs location access to provide safety alerts.",
+          "isAndroidBackgroundLocationEnabled": true
         }
-      ]
+      ],
+      "expo-secure-store"
     ],
-    "experiments": {
-      "typedRoutes": true
+    "extra": {
+      "eas": {
+        "projectId": "your-project-id-here"
+      }
     }
   }
 }
