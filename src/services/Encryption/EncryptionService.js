@@ -1,7 +1,6 @@
-import * as Crypto from 'expo-crypto';
-import * as SecureStore from 'expo-secure-store';
 import CryptoJS from 'crypto-js';
-import { CONFIG } from '../constants/config';
+import * as SecureStore from 'expo-secure-store';
+import { CONFIG } from '../../constants/config';
 
 export class EncryptionService {
   static async generateDeviceHash() {
