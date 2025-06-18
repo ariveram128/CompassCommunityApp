@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import { Link } from 'expo-router';
 import React, { useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -14,25 +15,8 @@ export default function HomeScreen() {
   const { reports, loading: reportsLoading, generateSampleData, clearAllData } = useReports();
   const [showMap, setShowMap] = useState(true);
 
-  const handleReportPress = () => {
-    if (!location) {
-      Alert.alert(
-        'Location Required',
-        'Please enable location access to submit reports',
-        [
-          { text: 'Cancel', style: 'cancel' },
-          { text: 'Enable', onPress: refreshLocation }
-        ]
-      );
-      return;
-    }
-    // For now, just show an alert - we'll create the report screen next
-    Alert.alert('Report Feature', 'Report submission screen coming soon!');
-  };
-
   const handleSettingsPress = () => {
-    // For now, just show an alert - we'll create the settings screen next
-    Alert.alert('Settings', 'Privacy settings screen coming soon!');
+    // Settings screen is now available via Link
   };
 
   const handleDeveloperMenu = () => {
@@ -66,7 +50,7 @@ export default function HomeScreen() {
     // Filter reports to only show those within alert radius
     return reports
       .filter(report => {
-        if (!location?.latitude || !location?.longitude) return false;
+        if (!location || typeof location.latitude !== 'number' || typeof location.longitude !== 'number') return false;
         // This is a simplified distance check - in production you'd use the LocationService
         const latDiff = Math.abs(report.location.latitude - location.latitude);
         const lonDiff = Math.abs(report.location.longitude - location.longitude);
@@ -98,12 +82,11 @@ export default function HomeScreen() {
           <TouchableOpacity onPress={handleDeveloperMenu} disabled={!__DEV__}>
             <Text style={styles.title}>Compass Community</Text>
           </TouchableOpacity>
-          <TouchableOpacity 
-            style={styles.settingsButton}
-            onPress={handleSettingsPress}
-          >
-            <Ionicons name="settings-outline" size={24} color="#fff" />
-          </TouchableOpacity>
+          <Link href="/settings" asChild>
+            <TouchableOpacity style={styles.settingsButton}>
+              <Ionicons name="settings-outline" size={24} color="#fff" />
+            </TouchableOpacity>
+          </Link>
         </View>
 
         {/* Location Status Card */}
@@ -234,17 +217,18 @@ export default function HomeScreen() {
 
       {/* Report Button */}
       <View style={styles.bottomContainer}>
-        <TouchableOpacity 
-          style={[
-            styles.reportButton,
-            !location && styles.reportButtonDisabled
-          ]}
-          onPress={handleReportPress}
-          disabled={!location}
-        >
-          <Ionicons name="alert-circle" size={24} color="#fff" />
-          <Text style={styles.reportButtonText}>Report ICE Activity</Text>
-        </TouchableOpacity>
+        <Link href="/report" asChild>
+          <TouchableOpacity 
+            style={[
+              styles.reportButton,
+              !location && styles.reportButtonDisabled
+            ]}
+            disabled={!location}
+          >
+            <Ionicons name="alert-circle" size={24} color="#fff" />
+            <Text style={styles.reportButtonText}>Report Activity</Text>
+          </TouchableOpacity>
+        </Link>
       </View>
     </SafeAreaView>
   );

@@ -1,6 +1,6 @@
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 
 export default function RootLayout() {
   useEffect(() => {
@@ -36,7 +36,7 @@ export default function RootLayout() {
         <Stack.Screen 
           name="index" 
           options={{ 
-            title: 'ICE Community Alert',
+            title: 'Compass Community',
             headerShown: false 
           }} 
         />
