@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
-import { Link } from 'expo-router';
-import React, { useState } from 'react';
+import { router } from 'expo-router';
+import React, { useEffect, useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -8,12 +8,38 @@ import { CommunityMap } from '../src/components/Map';
 import { CONFIG } from '../src/constants/config';
 import { useLocation } from '../src/hooks/useLocation';
 import { useReports } from '../src/hooks/useReports';
+import { NotificationService } from '../src/services/Notification/NotificationService';
 import type { CommunityReport } from '../src/services/Report/ReportService';
+import { ReportService } from '../src/services/Report/ReportService';
 
 export default function HomeScreen() {
   const { location, loading, error, refreshLocation } = useLocation();
   const { reports, loading: reportsLoading, generateSampleData, clearAllData } = useReports();
   const [showMap, setShowMap] = useState(true);
+  const [servicesInitialized, setServicesInitialized] = useState(false);
+
+  // Initialize services when app starts
+  useEffect(() => {
+    const initializeServices = async () => {
+      try {
+        await ReportService.initialize();
+        setServicesInitialized(true);
+        console.log('✅ App services initialized');
+      } catch (error) {
+        console.error('❌ Failed to initialize app services:', error);
+      }
+    };
+
+    initializeServices();
+  }, []);
+
+  // Update location for notification service when user location changes
+  useEffect(() => {
+    if (location && servicesInitialized) {
+      ReportService.setUserLocation(location);
+      console.log('📍 User location updated for notifications');
+    }
+  }, [location, servicesInitialized]);
 
   const handleDeveloperMenu = () => {
     if (!__DEV__) return;
@@ -35,9 +61,39 @@ export default function HomeScreen() {
         { 
           text: 'Toggle Map', 
           onPress: () => setShowMap(!showMap)
+        },
+        {
+          text: 'Test Notification',
+          onPress: () => testNotification()
         }
       ]
     );
+  };
+
+  const testNotification = async () => {
+    if (!location) {
+      Alert.alert('Location Required', 'Enable location to test notifications.');
+      return;
+    }
+
+    // Create a test report near user location
+    const userLocation = location as { latitude: number; longitude: number };
+    const testReport = {
+      id: 'test-' + Date.now(),
+      type: 'ICE_CHECKPOINT' as keyof typeof CONFIG.REPORT_TYPES,
+      location: {
+        latitude: userLocation.latitude + 0.001, // ~100m away
+        longitude: userLocation.longitude + 0.001
+      },
+      timestamp: Date.now(),
+      priority: 'high' as 'low' | 'medium' | 'high',
+      verified: false,
+      deviceHash: 'test-device',
+      expiresAt: Date.now() + (4 * 60 * 60 * 1000)
+    };
+
+    await NotificationService.checkForNearbyReports(testReport);
+    Alert.alert('Test Notification', 'Check if you received a test notification!');
   };
 
   const getTimeAgo = (timestamp: number) => {
@@ -54,11 +110,14 @@ export default function HomeScreen() {
           <TouchableOpacity onPress={handleDeveloperMenu} disabled={!__DEV__}>
             <Text style={styles.title}>Compass Community</Text>
           </TouchableOpacity>
-          <Link href="/settings" asChild>
-            <TouchableOpacity style={styles.settingsButton}>
-              <Ionicons name="settings-outline" size={24} color="#fff" />
+          <View style={styles.headerButtons}>
+            <TouchableOpacity style={styles.headerButton} onPress={() => router.push('/activity' as any)}>
+              <Ionicons name="list-outline" size={20} color="#fff" />
             </TouchableOpacity>
-          </Link>
+            <TouchableOpacity style={styles.headerButton} onPress={() => router.push('/settings')}>
+              <Ionicons name="settings-outline" size={20} color="#fff" />
+            </TouchableOpacity>
+          </View>
         </View>
 
         {/* Status Card */}
@@ -83,6 +142,7 @@ export default function HomeScreen() {
               </Text>
               <Text style={styles.statusSubtext}>
                 Anonymized location • {reports.length} active reports
+                {servicesInitialized && ' • Push notifications enabled'}
               </Text>
             </View>
           ) : (
@@ -157,23 +217,28 @@ export default function HomeScreen() {
             <Ionicons name="eye-off" size={16} color="#10B981" />
             <Text style={styles.privacyText}>No tracking</Text>
           </View>
+          {servicesInitialized && (
+            <View style={styles.privacyFeature}>
+              <Ionicons name="notifications" size={16} color="#10B981" />
+              <Text style={styles.privacyText}>Smart location-based alerts</Text>
+            </View>
+          )}
         </View>
       </ScrollView>
 
       {/* Report Button */}
       <View style={styles.bottomContainer}>
-        <Link href="/report" asChild>
-          <TouchableOpacity 
-            style={[
-              styles.reportButton,
-              !location && styles.reportButtonDisabled
-            ]}
-            disabled={!location}
-          >
-            <Ionicons name="alert-circle" size={24} color="#fff" />
-            <Text style={styles.reportButtonText}>Report Activity</Text>
-          </TouchableOpacity>
-        </Link>
+        <TouchableOpacity 
+          style={[
+            styles.reportButton,
+            !location && styles.reportButtonDisabled
+          ]}
+          disabled={!location}
+          onPress={() => location && router.push('/report')}
+        >
+          <Ionicons name="alert-circle" size={24} color="#fff" />
+          <Text style={styles.reportButtonText}>Report Activity</Text>
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
@@ -199,7 +264,12 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#fff',
   },
-  settingsButton: {
+  headerButtons: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  headerButton: {
     padding: 8,
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
     borderRadius: 12,
