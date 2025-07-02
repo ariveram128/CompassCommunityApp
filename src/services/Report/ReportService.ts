@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { CONFIG } from '../../constants/config.js';
 import { LocationService } from '../Location/LocationService.js';
+import { NotificationService } from '../Notification/NotificationService.js';
 // @ts-ignore - crypto-js doesn't have types but is commonly used
 import CryptoJS from 'crypto-js';
 
@@ -40,20 +41,42 @@ export class ReportService {
   private static deviceId: string | null = null;
 
   /**
+   * Initialize the report service
+   */
+  static async initialize(): Promise<void> {
+    try {
+      // Initialize notification service
+      await NotificationService.initialize();
+      console.log('Report service initialized');
+    } catch (error) {
+      console.error('Failed to initialize report service:', error);
+    }
+  }
+
+  /**
+   * Set user location for notification service
+   */
+  static setUserLocation(location: { latitude: number; longitude: number }): void {
+    NotificationService.setUserLocation(location);
+  }
+
+  /**
    * Get or generate anonymous device identifier for rate limiting
    */
   private static async getDeviceId(): Promise<string> {
     if (this.deviceId) return this.deviceId;
 
     try {
-      let deviceId = await AsyncStorage.getItem(STORAGE_KEYS.DEVICE_ID);
+      const deviceId = await AsyncStorage.getItem(STORAGE_KEYS.DEVICE_ID);
       
       if (!deviceId) {
         // Generate anonymous device hash
         const timestamp = Date.now().toString();
         const random = Math.random().toString();
-        deviceId = CryptoJS.SHA256(timestamp + random).toString();
-        await AsyncStorage.setItem(STORAGE_KEYS.DEVICE_ID, deviceId);
+        const newDeviceId = CryptoJS.SHA256(timestamp + random).toString();
+        await AsyncStorage.setItem(STORAGE_KEYS.DEVICE_ID, newDeviceId);
+        this.deviceId = newDeviceId;
+        return newDeviceId;
       }
 
       this.deviceId = deviceId;
@@ -61,7 +84,9 @@ export class ReportService {
     } catch (error) {
       console.error('Failed to get device ID:', error);
       // Fallback to session-only ID
-      return CryptoJS.SHA256(Date.now().toString()).toString();
+      const fallbackId = CryptoJS.SHA256(Date.now().toString()).toString();
+      this.deviceId = fallbackId;
+      return fallbackId;
     }
   }
 
@@ -120,6 +145,10 @@ export class ReportService {
       }
 
       const deviceId = await this.getDeviceId();
+      if (!deviceId) {
+        return { success: false, error: 'Failed to generate device identifier' };
+      }
+      
       const now = Date.now();
       
       // Anonymize location for privacy
@@ -143,6 +172,9 @@ export class ReportService {
       // Update rate limiting tracking
       await this.updateRateLimitTracking();
 
+      // Trigger notifications for nearby community members
+      await this.triggerCommunityNotifications(report);
+
       // In a real app, this would also sync to a backend
       // await this.syncToBackend(report);
 
@@ -151,6 +183,39 @@ export class ReportService {
       console.error('Error submitting report:', error);
       return { success: false, error: 'Failed to submit report. Please try again.' };
     }
+  }
+
+  /**
+   * Trigger notifications for nearby community members
+   */
+  private static async triggerCommunityNotifications(report: CommunityReport): Promise<void> {
+    try {
+      // Check if this is a report that should trigger notifications
+      if (this.shouldTriggerNotification(report)) {
+        await NotificationService.checkForNearbyReports(report);
+        console.log('�� Notification check triggered for new report:', report.type);
+      }
+    } catch (error) {
+      console.error('Error triggering community notifications:', error);
+    }
+  }
+
+  /**
+   * Determine if a report should trigger notifications
+   */
+  private static shouldTriggerNotification(report: CommunityReport): boolean {
+    // Don't trigger notifications for our own reports
+    const isOwnReport = false; // This would be determined by checking if deviceHash matches current user
+    
+    // Always trigger for high-priority safety reports
+    const isHighPrioritySafetyReport = report.priority === 'high' && 
+      [CONFIG.REPORT_TYPES.ICE_CHECKPOINT, CONFIG.REPORT_TYPES.ICE_RAID, 
+       CONFIG.REPORT_TYPES.ICE_PATROL, CONFIG.REPORT_TYPES.ICE_DETENTION].includes(report.type);
+    
+    // Trigger for verified community support if enabled
+    const isCommunitySupport = report.type === CONFIG.REPORT_TYPES.COMMUNITY_SUPPORT;
+    
+    return !isOwnReport && (isHighPrioritySafetyReport || isCommunitySupport);
   }
 
   /**
