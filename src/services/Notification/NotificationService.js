@@ -13,13 +13,13 @@ try {
   notificationsAvailable = true;
   
   // Configure notification behavior only if available
-  Notifications.setNotificationHandler({
-    handleNotification: async () => ({
-      shouldShowAlert: true,
-      shouldPlaySound: true,
-      shouldSetBadge: false,
-    }),
-  });
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: false,
+  }),
+});
 } catch (error) {
   console.warn('Notifications not available (likely in Expo Go):', error.message);
   notificationsAvailable = false;
@@ -102,20 +102,20 @@ export class NotificationService {
     }
 
     try {
-      const { status: existingStatus } = await Notifications.getPermissionsAsync();
-      let finalStatus = existingStatus;
+    const { status: existingStatus } = await Notifications.getPermissionsAsync();
+    let finalStatus = existingStatus;
 
-      if (existingStatus !== 'granted') {
-        const { status } = await Notifications.requestPermissionsAsync();
-        finalStatus = status;
-      }
+    if (existingStatus !== 'granted') {
+      const { status } = await Notifications.requestPermissionsAsync();
+      finalStatus = status;
+    }
 
-      if (finalStatus !== 'granted') {
-        console.warn('Notification permission not granted');
-        return false;
-      }
+    if (finalStatus !== 'granted') {
+      console.warn('Notification permission not granted');
+      return false;
+    }
 
-      return true;
+    return true;
     } catch (error) {
       console.error('Error requesting notification permissions:', error);
       return false;
@@ -132,8 +132,8 @@ export class NotificationService {
         // High Priority Channel
         await Notifications.setNotificationChannelAsync('high-priority-alerts', {
           name: 'High Priority Alerts',
-          importance: Notifications.AndroidImportance.HIGH,
-          vibrationPattern: [0, 250, 250, 250],
+        importance: Notifications.AndroidImportance.HIGH,
+        vibrationPattern: [0, 250, 250, 250],
           lightColor: '#EF4444',
           sound: 'default',
           description: 'Critical community safety alerts within 3km',
@@ -146,7 +146,7 @@ export class NotificationService {
           importance: Notifications.AndroidImportance.DEFAULT,
           vibrationPattern: [0, 150, 150, 150],
           lightColor: '#F59E0B',
-          sound: 'default',
+        sound: 'default',
           description: 'Community safety alerts within 8km'
         });
 
@@ -378,10 +378,10 @@ export class NotificationService {
       const trigger = delaySeconds > 0 ? { seconds: delaySeconds } : null;
 
       const notificationContent = {
-        title,
-        body,
-        data: { ...data, timestamp: Date.now(), category: categoryId },
-        categoryIdentifier: categoryId,
+          title,
+          body,
+          data: { ...data, timestamp: Date.now(), category: categoryId },
+          categoryIdentifier: categoryId,
         sound: this.preferences.soundEnabled ? 'default' : false,
         priority: priority === 'high' 
           ? Notifications.AndroidImportance.HIGH 
