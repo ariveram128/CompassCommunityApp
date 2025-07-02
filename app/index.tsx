@@ -77,12 +77,13 @@ export default function HomeScreen() {
     }
 
     // Create a test report near user location
+    const userLocation = location as { latitude: number; longitude: number };
     const testReport = {
       id: 'test-' + Date.now(),
-      type: 'checkpoint' as keyof typeof CONFIG.REPORT_TYPES,
+      type: 'ICE_CHECKPOINT' as keyof typeof CONFIG.REPORT_TYPES,
       location: {
-        latitude: location.latitude + 0.001, // ~100m away
-        longitude: location.longitude + 0.001
+        latitude: userLocation.latitude + 0.001, // ~100m away
+        longitude: userLocation.longitude + 0.001
       },
       timestamp: Date.now(),
       priority: 'high' as 'low' | 'medium' | 'high',
@@ -109,9 +110,14 @@ export default function HomeScreen() {
           <TouchableOpacity onPress={handleDeveloperMenu} disabled={!__DEV__}>
             <Text style={styles.title}>Compass Community</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.settingsButton} onPress={() => router.push('/settings')}>
-            <Ionicons name="settings-outline" size={24} color="#fff" />
-          </TouchableOpacity>
+          <View style={styles.headerButtons}>
+            <TouchableOpacity style={styles.headerButton} onPress={() => router.push('/activity' as any)}>
+              <Ionicons name="list-outline" size={20} color="#fff" />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.headerButton} onPress={() => router.push('/settings')}>
+              <Ionicons name="settings-outline" size={20} color="#fff" />
+            </TouchableOpacity>
+          </View>
         </View>
 
         {/* Status Card */}
@@ -258,7 +264,12 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#fff',
   },
-  settingsButton: {
+  headerButtons: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  headerButton: {
     padding: 8,
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
     borderRadius: 12,
