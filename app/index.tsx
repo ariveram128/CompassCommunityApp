@@ -1,11 +1,12 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { CommunityMap } from '../src/components/Map';
 import { CONFIG } from '../src/constants/config';
+import { useCustomAlert } from '../src/hooks/useCustomAlert';
 import { useLocation } from '../src/hooks/useLocation';
 import { useReports } from '../src/hooks/useReports';
 import { useVerification } from '../src/hooks/useVerification';
@@ -13,10 +14,13 @@ import { NotificationService } from '../src/services/Notification/NotificationSe
 import type { CommunityReport } from '../src/services/Report/ReportService';
 import { ReportService } from '../src/services/Report/ReportService';
 
+type AlertActionStyle = 'default' | 'destructive' | 'cancel' | 'primary';
+
 export default function HomeScreen() {
   const { location, loading, error, refreshLocation } = useLocation();
   const { reports, loading: reportsLoading, generateSampleData, clearAllData, refreshReports } = useReports();
   const { verificationStats, getTrustLevelInfo, clearAllData: clearVerificationData } = useVerification();
+  const { showAlert, AlertComponent } = useCustomAlert();
   const [showMap, setShowMap] = useState(true);
   const [servicesInitialized, setServicesInitialized] = useState(false);
 
@@ -46,48 +50,59 @@ export default function HomeScreen() {
   const handleDeveloperMenu = () => {
     if (!__DEV__) return;
     
-    Alert.alert(
+    showAlert(
       'Developer Tools',
       'Choose an action for testing:',
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: 'Cancel', style: 'cancel' as AlertActionStyle },
         { 
           text: 'Generate Sample Reports', 
+          style: 'default' as AlertActionStyle,
           onPress: () => location && generateSampleData(location)
         },
         {
           text: 'Generate Sample Verifications',
+          style: 'default' as AlertActionStyle,
           onPress: () => location && generateSampleVerifications()
         },
         { 
           text: 'Clear Report Data', 
-          style: 'destructive',
+          style: 'destructive' as AlertActionStyle,
           onPress: clearAllData
         },
         {
           text: 'Clear Verification Data',
-          style: 'destructive', 
+          style: 'destructive' as AlertActionStyle, 
           onPress: () => clearVerificationData()
         },
         { 
           text: 'Toggle Map', 
+          style: 'default' as AlertActionStyle,
           onPress: () => setShowMap(!showMap)
         },
         {
           text: 'Test Notification',
+          style: 'default' as AlertActionStyle,
           onPress: () => testNotification()
         },
         {
           text: 'Show Verification Stats',
+          style: 'primary' as AlertActionStyle,
           onPress: () => showVerificationStats()
         }
-      ]
+      ],
+      { icon: 'code-slash', iconColor: '#6366F1' }
     );
   };
 
   const generateSampleVerifications = async () => {
     if (!location) {
-      Alert.alert('Location Required', 'Enable location to generate sample verifications.');
+      showAlert(
+        'Location Required',
+        'Enable location to generate sample verifications.',
+        [{ text: 'OK', style: 'primary' as AlertActionStyle }],
+        { icon: 'location-outline', iconColor: '#EF4444' }
+      );
       return;
     }
 
@@ -105,7 +120,12 @@ export default function HomeScreen() {
       const activeReports = await ReportService.getActiveReports();
       
       if (activeReports.length === 0) {
-        Alert.alert('No Reports', 'Generate sample reports first.');
+        showAlert(
+          'No Reports',
+          'Generate sample reports first.',
+          [{ text: 'OK', style: 'primary' as AlertActionStyle }],
+          { icon: 'document-outline', iconColor: '#F59E0B' }
+        );
         return;
       }
 
@@ -138,9 +158,11 @@ export default function HomeScreen() {
         }
       }
 
-      Alert.alert(
+      showAlert(
         'Sample Verifications Generated',
-        'Created sample verifications for testing. Check the Recent Activity screen to see verification indicators!'
+        'Created sample verifications for testing. Check the Recent Activity screen to see verification indicators!',
+        [{ text: 'OK', style: 'primary' as AlertActionStyle }],
+        { icon: 'checkmark-circle', iconColor: '#10B981' }
       );
       
       // Refresh reports to show updated verification status
@@ -148,25 +170,40 @@ export default function HomeScreen() {
       
     } catch (error) {
       console.error('Error generating sample verifications:', error);
-      Alert.alert('Error', 'Failed to generate sample verifications.');
+      showAlert(
+        'Error',
+        'Failed to generate sample verifications.',
+        [{ text: 'OK', style: 'primary' as AlertActionStyle }],
+        { icon: 'alert-circle', iconColor: '#EF4444' }
+      );
     }
   };
 
   const showVerificationStats = () => {
     const trustInfo = getTrustLevelInfo(verificationStats.trustLevel);
-    Alert.alert(
-      'Verification Statistics',
+    const message = 
       `Trust Level: ${trustInfo.label}\n` +
       `Trust Score: ${(verificationStats.userTrustScore * 100).toFixed(1)}%\n` +
       `Verifications Submitted: ${verificationStats.verificationsSubmitted}\n` +
       `Total Community Verifications: ${verificationStats.totalVerifications}\n\n` +
-      `${trustInfo.description}`
+      `${trustInfo.description}`;
+    
+    showAlert(
+      'Verification Statistics',
+      message,
+      [{ text: 'OK', style: 'primary' as AlertActionStyle }],
+      { icon: trustInfo.icon, iconColor: trustInfo.color }
     );
   };
 
   const testNotification = async () => {
     if (!location) {
-      Alert.alert('Location Required', 'Enable location to test notifications.');
+      showAlert(
+        'Location Required',
+        'Enable location to test notifications.',
+        [{ text: 'OK', style: 'primary' as AlertActionStyle }],
+        { icon: 'location-outline', iconColor: '#EF4444' }
+      );
       return;
     }
 
@@ -187,13 +224,29 @@ export default function HomeScreen() {
     };
 
     await NotificationService.checkForNearbyReports(testReport);
-    Alert.alert('Test Notification', 'Check if you received a test notification!');
+    showAlert(
+      'Test Notification',
+      'Check if you received a test notification!',
+      [{ text: 'OK', style: 'primary' as AlertActionStyle }],
+      { icon: 'notifications', iconColor: '#6366F1' }
+    );
   };
 
   const getTimeAgo = (timestamp: number) => {
     const ageHours = (Date.now() - timestamp) / (1000 * 60 * 60);
     if (ageHours < 1) return `${Math.round(ageHours * 60)}m ago`;
     return `${Math.round(ageHours)}h ago`;
+  };
+
+  const handleReportPress = (report: CommunityReport) => {
+    const message = `${report.type.replace('_', ' ').toUpperCase()}\n\nReported ${getTimeAgo(report.timestamp)}\n${report.verified ? 'Verified by community' : 'Unverified report'}`;
+    
+    showAlert(
+      'Community Report',
+      message,
+      [{ text: 'OK', style: 'primary' as AlertActionStyle }],
+      { icon: 'document-text', iconColor: '#6366F1' }
+    );
   };
 
   return (
@@ -281,13 +334,7 @@ export default function HomeScreen() {
               <CommunityMap
                 userLocation={location}
                 reports={reports}
-                onReportPress={(report: CommunityReport) => {
-                  Alert.alert(
-                    'Community Report',
-                    `${report.type.replace('_', ' ').toUpperCase()}\n\nReported ${getTimeAgo(report.timestamp)}\n${report.verified ? 'Verified by community' : 'Unverified report'}`,
-                    [{ text: 'OK' }]
-                  );
-                }}
+                onReportPress={handleReportPress}
                 showAlertRadius={true}
                 style={styles.map}
               />
@@ -347,6 +394,8 @@ export default function HomeScreen() {
           <Text style={styles.reportButtonText}>Report Activity</Text>
         </TouchableOpacity>
       </View>
+      
+      <AlertComponent />
     </SafeAreaView>
   );
 }

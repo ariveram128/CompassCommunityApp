@@ -2,7 +2,6 @@ import { Ionicons } from '@expo/vector-icons';
 import { router, Stack } from 'expo-router';
 import React, { useCallback, useEffect, useState } from 'react';
 import {
-    Alert,
     FlatList,
     Modal,
     RefreshControl,
@@ -14,6 +13,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { CONFIG } from '../src/constants/config';
+import { useCustomAlert } from '../src/hooks/useCustomAlert';
 import { useLocation } from '../src/hooks/useLocation';
 import { useReports } from '../src/hooks/useReports';
 import { useVerification } from '../src/hooks/useVerification';
@@ -23,6 +23,7 @@ import type { CommunityReport } from '../src/services/Report/ReportService';
 type FilterType = 'all' | keyof typeof CONFIG.REPORT_TYPES;
 type SortType = 'newest' | 'oldest' | 'closest' | 'priority' | 'verified';
 type TimeFilter = 'all' | '1h' | '2h' | '4h';
+type AlertActionStyle = 'default' | 'destructive' | 'cancel' | 'primary';
 
 const REPORT_TYPE_LABELS: Record<keyof typeof CONFIG.REPORT_TYPES, string> = {
   'ICE_CHECKPOINT': 'Checkpoint',
@@ -55,6 +56,7 @@ export default function RecentActivityScreen() {
     getTrustLevelInfo,
     loading: verificationLoading
   } = useVerification();
+  const { showAlert, AlertComponent } = useCustomAlert();
   
   const [filteredReports, setFilteredReports] = useState<CommunityReport[]>([]);
   const [refreshing, setRefreshing] = useState(false);
@@ -152,7 +154,12 @@ export default function RecentActivityScreen() {
 
   const handleVerifyReport = async (report: CommunityReport) => {
     if (!location) {
-      Alert.alert('Location Required', 'Enable location to verify reports.');
+      showAlert(
+        'Location Required',
+        'Enable location to verify reports.',
+        [{ text: 'OK', style: 'primary' as AlertActionStyle }],
+        { icon: 'location-outline', iconColor: '#EF4444' }
+      );
       return;
     }
 
@@ -161,35 +168,57 @@ export default function RecentActivityScreen() {
       const eligibility = await canVerifyReport(report.id, report.location);
       
       if (!eligibility.allowed) {
-        Alert.alert('Cannot Verify', eligibility.reason || 'Unable to verify this report');
+        showAlert(
+          'Cannot Verify',
+          eligibility.reason || 'Unable to verify this report',
+          [{ text: 'OK', style: 'primary' as AlertActionStyle }],
+          { icon: 'close-circle', iconColor: '#EF4444' }
+        );
         return;
       }
 
       // Confirm verification
-      Alert.alert(
+      showAlert(
         'Verify Report',
         `Confirm this ${REPORT_TYPE_LABELS[report.type]} report?\n\nThis helps the community assess report reliability.`,
         [
-          { text: 'Cancel', style: 'cancel' },
+          { text: 'Cancel', style: 'cancel' as AlertActionStyle },
           { 
             text: 'Verify', 
+            style: 'primary' as AlertActionStyle,
             onPress: async () => {
               const result = await verifyReport(report.id, report.location, report.timestamp);
               
               if (result.success) {
-                Alert.alert('Verification Submitted', 'Thank you for helping verify this report!');
+                showAlert(
+                  'Verification Submitted',
+                  'Thank you for helping verify this report!',
+                  [{ text: 'OK', style: 'primary' as AlertActionStyle }],
+                  { icon: 'checkmark-circle', iconColor: '#10B981' }
+                );
                 // Refresh reports to update verification status
                 await refreshReports();
               } else {
-                Alert.alert('Verification Failed', result.error || 'Unable to submit verification');
+                showAlert(
+                  'Verification Failed',
+                  result.error || 'Unable to submit verification',
+                  [{ text: 'OK', style: 'primary' as AlertActionStyle }],
+                  { icon: 'close-circle', iconColor: '#EF4444' }
+                );
               }
             }
           }
-        ]
+        ],
+        { icon: 'shield-checkmark', iconColor: '#6366F1' }
       );
     } catch (error) {
       console.error('Error handling verification:', error);
-      Alert.alert('Error', 'Unable to verify report at this time');
+      showAlert(
+        'Error',
+        'Unable to verify report at this time',
+        [{ text: 'OK', style: 'primary' as AlertActionStyle }],
+        { icon: 'alert-circle', iconColor: '#EF4444' }
+      );
     }
   };
 
@@ -199,19 +228,28 @@ export default function RecentActivityScreen() {
       report.verificationSummary?.verificationStrength || 'unverified'
     );
     
-    Alert.alert(
-      `${REPORT_TYPE_LABELS[report.type]}`,
+    const message = 
       `Priority: ${report.priority.toUpperCase()}\n` +
       `Reported: ${getTimeAgo(report.timestamp)}\n` +
       `Distance: ${distance || 'Unknown'}\n` +
       `Verification: ${verificationInfo.label}\n` +
       `Community Verifications: ${report.verificationSummary?.totalVerifications || 0}\n` +
-      `ID: ${report.id}`,
-      [
-        { text: 'Close', style: 'cancel' },
-        { text: 'View on Map', onPress: () => viewOnMap(report) },
-        location ? { text: 'Verify Report', onPress: () => handleVerifyReport(report) } : null
-      ].filter(Boolean) as any
+      `ID: ${report.id}`;
+
+    const actions = [
+      { text: 'Close', style: 'cancel' as AlertActionStyle },
+      { text: 'View on Map', style: 'default' as AlertActionStyle, onPress: () => viewOnMap(report) }
+    ];
+
+    if (location) {
+      actions.push({ text: 'Verify Report', style: 'primary' as AlertActionStyle, onPress: () => handleVerifyReport(report) });
+    }
+
+    showAlert(
+      REPORT_TYPE_LABELS[report.type],
+      message,
+      actions,
+      { icon: PRIORITY_ICONS[report.priority], iconColor: PRIORITY_COLORS[report.priority] }
     );
   };
 
@@ -494,6 +532,7 @@ export default function RecentActivityScreen() {
       />
 
       {renderFilterModal()}
+      <AlertComponent />
     </SafeAreaView>
   );
 }
