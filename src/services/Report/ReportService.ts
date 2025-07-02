@@ -2,6 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { CONFIG } from '../../constants/config.js';
 import { LocationService } from '../Location/LocationService.js';
 import { NotificationService } from '../Notification/NotificationService.js';
+import { VerificationService } from '../Verification/VerificationService';
 // @ts-ignore - crypto-js doesn't have types but is commonly used
 import CryptoJS from 'crypto-js';
 
@@ -17,6 +18,11 @@ export interface CommunityReport {
   verified: boolean;
   deviceHash: string; // Anonymous device identifier for rate limiting
   expiresAt: number;
+  verificationSummary?: {
+    totalVerifications: number;
+    verificationStrength: 'unverified' | 'weak' | 'medium' | 'strong' | 'verified';
+    trustWeightedScore: number;
+  };
 }
 
 export interface ReportSubmission {
@@ -47,9 +53,13 @@ export class ReportService {
     try {
       // Initialize notification service
       await NotificationService.initialize();
-      console.log('Report service initialized');
+      
+      // Initialize verification service
+      await VerificationService.initialize();
+      
+      console.log('✅ Report service initialized with verification support');
     } catch (error) {
-      console.error('Failed to initialize report service:', error);
+      console.error('❌ Failed to initialize report service:', error);
     }
   }
 
@@ -163,7 +173,12 @@ export class ReportService {
         priority: submission.urgency,
         verified: false, // Reports start unverified
         deviceHash: CryptoJS.SHA256(deviceId).toString().substring(0, 8),
-        expiresAt: now + (CONFIG.REPORT_EXPIRY_HOURS * 60 * 60 * 1000)
+        expiresAt: now + (CONFIG.REPORT_EXPIRY_HOURS * 60 * 60 * 1000),
+        verificationSummary: {
+          totalVerifications: 0,
+          verificationStrength: 'unverified',
+          trustWeightedScore: 0
+        }
       };
 
       // Save to local storage
@@ -193,7 +208,7 @@ export class ReportService {
       // Check if this is a report that should trigger notifications
       if (this.shouldTriggerNotification(report)) {
         await NotificationService.checkForNearbyReports(report);
-        console.log('�� Notification check triggered for new report:', report.type);
+        console.log(' Notification check triggered for new report:', report.type);
       }
     } catch (error) {
       console.error('Error triggering community notifications:', error);
@@ -219,26 +234,64 @@ export class ReportService {
   }
 
   /**
-   * Get all active community reports
+   * Get active reports with verification summaries
    */
   static async getActiveReports(): Promise<CommunityReport[]> {
     try {
-      const reportsJson = await AsyncStorage.getItem(STORAGE_KEYS.REPORTS);
-      if (!reportsJson) return [];
-
-      const reports: CommunityReport[] = JSON.parse(reportsJson);
-      const now = Date.now();
-
+      const stored = await AsyncStorage.getItem(STORAGE_KEYS.REPORTS);
+      let reports: CommunityReport[] = stored ? JSON.parse(stored) : [];
+      
       // Filter out expired reports
-      const activeReports = reports.filter(report => report.expiresAt > now);
-
-      // Save filtered list (cleanup expired reports)
-      await AsyncStorage.setItem(STORAGE_KEYS.REPORTS, JSON.stringify(activeReports));
-
-      return activeReports;
+      const now = Date.now();
+      reports = reports.filter(report => report.expiresAt > now);
+      
+      // Update verification summaries
+      reports = await this.updateVerificationSummaries(reports);
+      
+      return reports;
     } catch (error) {
-      console.error('Error getting active reports:', error);
+      console.error('Error loading reports:', error);
       return [];
+    }
+  }
+
+  /**
+   * Update verification summaries for a list of reports
+   */
+  private static async updateVerificationSummaries(reports: CommunityReport[]): Promise<CommunityReport[]> {
+    try {
+      const updatedReports = await Promise.all(
+        reports.map(async (report) => {
+          const verificationSummary = await VerificationService.getVerificationSummary(report.id);
+          
+          return {
+            ...report,
+            verificationSummary: {
+              totalVerifications: verificationSummary.totalVerifications,
+              verificationStrength: verificationSummary.verificationStrength,
+              trustWeightedScore: verificationSummary.trustWeightedScore
+            }
+          };
+        })
+      );
+      
+      return updatedReports;
+    } catch (error) {
+      console.error('Error updating verification summaries:', error);
+      return reports; // Return original reports if verification update fails
+    }
+  }
+
+  /**
+   * Get a single report with verification summary
+   */
+  static async getReportWithVerification(reportId: string): Promise<CommunityReport | null> {
+    try {
+      const reports = await this.getActiveReports();
+      return reports.find(report => report.id === reportId) || null;
+    } catch (error) {
+      console.error('Error getting report with verification:', error);
+      return null;
     }
   }
 
@@ -405,7 +458,12 @@ export class ReportService {
         priority: submission.urgency,
         verified: Math.random() > 0.3, // 70% verified
         deviceHash: CryptoJS.SHA256(deviceId + Math.random().toString()).toString().substring(0, 8),
-        expiresAt: now + (CONFIG.REPORT_EXPIRY_HOURS * 60 * 60 * 1000)
+        expiresAt: now + (CONFIG.REPORT_EXPIRY_HOURS * 60 * 60 * 1000),
+        verificationSummary: {
+          totalVerifications: 0,
+          verificationStrength: 'unverified',
+          trustWeightedScore: 0
+        }
       };
 
       const reportsJson = await AsyncStorage.getItem(STORAGE_KEYS.REPORTS);

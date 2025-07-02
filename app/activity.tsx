@@ -16,11 +16,12 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { CONFIG } from '../src/constants/config';
 import { useLocation } from '../src/hooks/useLocation';
 import { useReports } from '../src/hooks/useReports';
+import { useVerification } from '../src/hooks/useVerification';
 import { LocationService } from '../src/services/Location/LocationService';
 import type { CommunityReport } from '../src/services/Report/ReportService';
 
 type FilterType = 'all' | keyof typeof CONFIG.REPORT_TYPES;
-type SortType = 'newest' | 'oldest' | 'closest' | 'priority';
+type SortType = 'newest' | 'oldest' | 'closest' | 'priority' | 'verified';
 type TimeFilter = 'all' | '1h' | '2h' | '4h';
 
 const REPORT_TYPE_LABELS: Record<keyof typeof CONFIG.REPORT_TYPES, string> = {
@@ -46,6 +47,15 @@ const PRIORITY_ICONS = {
 export default function RecentActivityScreen() {
   const { location } = useLocation();
   const { reports, loading: reportsLoading, refreshReports } = useReports();
+  const { 
+    verificationStats, 
+    canVerifyReport, 
+    verifyReport,
+    getVerificationStrengthInfo,
+    getTrustLevelInfo,
+    loading: verificationLoading
+  } = useVerification();
+  
   const [filteredReports, setFilteredReports] = useState<CommunityReport[]>([]);
   const [refreshing, setRefreshing] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
@@ -97,6 +107,11 @@ export default function RecentActivityScreen() {
         case 'priority':
           const priorityOrder = { 'high': 3, 'medium': 2, 'low': 1 };
           return priorityOrder[b.priority] - priorityOrder[a.priority];
+        case 'verified':
+          const verificationOrder = { 'verified': 5, 'strong': 4, 'medium': 3, 'weak': 2, 'unverified': 1 };
+          const aStrength = a.verificationSummary?.verificationStrength || 'unverified';
+          const bStrength = b.verificationSummary?.verificationStrength || 'unverified';
+          return verificationOrder[bStrength] - verificationOrder[aStrength];
         case 'closest':
           if (!location) return 0;
           const distanceA = LocationService.calculateDistance(location, a.location);
@@ -135,19 +150,68 @@ export default function RecentActivityScreen() {
     return distance < 1 ? `${Math.round(distance * 1000)}m` : `${distance.toFixed(1)}km`;
   };
 
+  const handleVerifyReport = async (report: CommunityReport) => {
+    if (!location) {
+      Alert.alert('Location Required', 'Enable location to verify reports.');
+      return;
+    }
+
+    try {
+      // Check if user can verify this report
+      const eligibility = await canVerifyReport(report.id, report.location);
+      
+      if (!eligibility.allowed) {
+        Alert.alert('Cannot Verify', eligibility.reason || 'Unable to verify this report');
+        return;
+      }
+
+      // Confirm verification
+      Alert.alert(
+        'Verify Report',
+        `Confirm this ${REPORT_TYPE_LABELS[report.type]} report?\n\nThis helps the community assess report reliability.`,
+        [
+          { text: 'Cancel', style: 'cancel' },
+          { 
+            text: 'Verify', 
+            onPress: async () => {
+              const result = await verifyReport(report.id, report.location, report.timestamp);
+              
+              if (result.success) {
+                Alert.alert('Verification Submitted', 'Thank you for helping verify this report!');
+                // Refresh reports to update verification status
+                await refreshReports();
+              } else {
+                Alert.alert('Verification Failed', result.error || 'Unable to submit verification');
+              }
+            }
+          }
+        ]
+      );
+    } catch (error) {
+      console.error('Error handling verification:', error);
+      Alert.alert('Error', 'Unable to verify report at this time');
+    }
+  };
+
   const handleReportPress = (report: CommunityReport) => {
     const distance = getDistance(report);
+    const verificationInfo = getVerificationStrengthInfo(
+      report.verificationSummary?.verificationStrength || 'unverified'
+    );
+    
     Alert.alert(
       `${REPORT_TYPE_LABELS[report.type]}`,
       `Priority: ${report.priority.toUpperCase()}\n` +
       `Reported: ${getTimeAgo(report.timestamp)}\n` +
       `Distance: ${distance || 'Unknown'}\n` +
-      `Status: ${report.verified ? 'Verified by community' : 'Unverified'}\n` +
+      `Verification: ${verificationInfo.label}\n` +
+      `Community Verifications: ${report.verificationSummary?.totalVerifications || 0}\n` +
       `ID: ${report.id}`,
       [
         { text: 'Close', style: 'cancel' },
-        { text: 'View on Map', onPress: () => viewOnMap(report) }
-      ]
+        { text: 'View on Map', onPress: () => viewOnMap(report) },
+        location ? { text: 'Verify Report', onPress: () => handleVerifyReport(report) } : null
+      ].filter(Boolean) as any
     );
   };
 
@@ -156,9 +220,30 @@ export default function RecentActivityScreen() {
     router.push(`/?reportId=${report.id}`);
   };
 
+  const renderVerificationBadge = (report: CommunityReport) => {
+    const verificationSummary = report.verificationSummary;
+    if (!verificationSummary || verificationSummary.totalVerifications === 0) {
+      return null;
+    }
+
+    const verificationInfo = getVerificationStrengthInfo(verificationSummary.verificationStrength);
+    
+    return (
+      <View style={[styles.verificationBadge, { backgroundColor: verificationInfo.color + '20' }]}>
+        <Ionicons name={verificationInfo.icon} size={12} color={verificationInfo.color} />
+        <Text style={[styles.verificationText, { color: verificationInfo.color }]}>
+          {verificationSummary.totalVerifications}
+        </Text>
+      </View>
+    );
+  };
+
   const renderReportItem = ({ item: report }: { item: CommunityReport }) => {
     const distance = getDistance(report);
     const priorityColor = PRIORITY_COLORS[report.priority];
+    const verificationInfo = getVerificationStrengthInfo(
+      report.verificationSummary?.verificationStrength || 'unverified'
+    );
     
     return (
       <TouchableOpacity 
@@ -174,9 +259,7 @@ export default function RecentActivityScreen() {
               color={priorityColor} 
             />
             <Text style={styles.reportType}>{REPORT_TYPE_LABELS[report.type]}</Text>
-            {report.verified && (
-              <Ionicons name="checkmark-circle" size={16} color="#10B981" />
-            )}
+            {renderVerificationBadge(report)}
           </View>
           <Text style={[styles.priority, { color: priorityColor }]}>
             {report.priority.toUpperCase()}
@@ -195,15 +278,30 @@ export default function RecentActivityScreen() {
                 <Text style={styles.metaText}>{distance}</Text>
               </View>
             )}
+            <View style={styles.metaItem}>
+              <Ionicons name={verificationInfo.icon} size={14} color={verificationInfo.color} />
+              <Text style={[styles.metaText, { color: verificationInfo.color }]}>
+                {verificationInfo.label}
+              </Text>
+            </View>
           </View>
           
-          <TouchableOpacity 
-            style={styles.viewButton}
-            onPress={() => viewOnMap(report)}
-          >
-            <Ionicons name="map" size={16} color="#6366F1" />
-            <Text style={styles.viewButtonText}>View</Text>
-          </TouchableOpacity>
+          <View style={styles.actionButtons}>
+            <TouchableOpacity 
+              style={styles.viewButton}
+              onPress={() => viewOnMap(report)}
+            >
+              <Ionicons name="map" size={16} color="#6366F1" />
+            </TouchableOpacity>
+            {location && (
+              <TouchableOpacity 
+                style={styles.verifyButton}
+                onPress={() => handleVerifyReport(report)}
+              >
+                <Ionicons name="checkmark-circle" size={16} color="#10B981" />
+              </TouchableOpacity>
+            )}
+          </View>
         </View>
       </TouchableOpacity>
     );
@@ -297,7 +395,8 @@ export default function RecentActivityScreen() {
                 ['newest', 'Newest First'],
                 ['oldest', 'Oldest First'],
                 ['closest', 'Closest First'],
-                ['priority', 'Priority']
+                ['priority', 'Priority'],
+                ['verified', 'Most Verified']
               ].map(([key, label]) => (
                 <TouchableOpacity 
                   key={key}
@@ -334,6 +433,8 @@ export default function RecentActivityScreen() {
     </Modal>
   );
 
+  const trustLevelInfo = getTrustLevelInfo(verificationStats.trustLevel);
+
   return (
     <SafeAreaView style={styles.container}>
       <Stack.Screen options={{ headerShown: false }} />
@@ -351,17 +452,27 @@ export default function RecentActivityScreen() {
 
       {/* Stats Bar */}
       <View style={styles.statsBar}>
-        <Text style={styles.statsText}>
-          {filteredReports.length} report{filteredReports.length !== 1 ? 's' : ''}
-        </Text>
-        {typeFilter !== 'all' && (
-          <View style={styles.activeFilter}>
-            <Text style={styles.activeFilterText}>{REPORT_TYPE_LABELS[typeFilter]}</Text>
-            <TouchableOpacity onPress={() => setTypeFilter('all')}>
-              <Ionicons name="close" size={16} color="#6366F1" />
-            </TouchableOpacity>
-          </View>
-        )}
+        <View style={styles.statsLeft}>
+          <Text style={styles.statsText}>
+            {filteredReports.length} report{filteredReports.length !== 1 ? 's' : ''}
+          </Text>
+          {typeFilter !== 'all' && (
+            <View style={styles.activeFilter}>
+              <Text style={styles.activeFilterText}>{REPORT_TYPE_LABELS[typeFilter]}</Text>
+              <TouchableOpacity onPress={() => setTypeFilter('all')}>
+                <Ionicons name="close" size={16} color="#6366F1" />
+              </TouchableOpacity>
+            </View>
+          )}
+        </View>
+        
+        {/* Trust Level Indicator */}
+        <View style={[styles.trustBadge, { backgroundColor: trustLevelInfo.color + '20' }]}>
+          <Ionicons name={trustLevelInfo.icon} size={14} color={trustLevelInfo.color} />
+          <Text style={[styles.trustText, { color: trustLevelInfo.color }]}>
+            {trustLevelInfo.label}
+          </Text>
+        </View>
       </View>
 
       {/* Reports List */}
@@ -417,15 +528,21 @@ const styles = StyleSheet.create({
   statsBar: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
     paddingHorizontal: 24,
     paddingVertical: 12,
     borderBottomWidth: 1,
     borderBottomColor: 'rgba(255, 255, 255, 0.1)',
   },
+  statsLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
   statsText: {
     color: '#94A3B8',
     fontSize: 14,
-    flex: 1,
+    marginRight: 12,
   },
   activeFilter: {
     flexDirection: 'row',
@@ -440,6 +557,18 @@ const styles = StyleSheet.create({
     color: '#6366F1',
     fontSize: 12,
     fontWeight: '500',
+  },
+  trustBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12,
+    gap: 4,
+  },
+  trustText: {
+    fontSize: 11,
+    fontWeight: '600',
   },
   listContainer: {
     flexGrow: 1,
@@ -470,6 +599,18 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
+  verificationBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 8,
+    gap: 3,
+  },
+  verificationText: {
+    fontSize: 11,
+    fontWeight: '600',
+  },
   priority: {
     fontSize: 12,
     fontWeight: '700',
@@ -481,7 +622,9 @@ const styles = StyleSheet.create({
   },
   reportMeta: {
     flexDirection: 'row',
-    gap: 16,
+    gap: 12,
+    flex: 1,
+    flexWrap: 'wrap',
   },
   metaItem: {
     flexDirection: 'row',
@@ -492,19 +635,19 @@ const styles = StyleSheet.create({
     color: '#94A3B8',
     fontSize: 12,
   },
-  viewButton: {
+  actionButtons: {
     flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
+    gap: 8,
+  },
+  viewButton: {
     backgroundColor: 'rgba(99, 102, 241, 0.2)',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
+    padding: 8,
     borderRadius: 12,
   },
-  viewButtonText: {
-    color: '#6366F1',
-    fontSize: 12,
-    fontWeight: '500',
+  verifyButton: {
+    backgroundColor: 'rgba(16, 185, 129, 0.2)',
+    padding: 8,
+    borderRadius: 12,
   },
   emptyState: {
     flex: 1,

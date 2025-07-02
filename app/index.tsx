@@ -8,13 +8,15 @@ import { CommunityMap } from '../src/components/Map';
 import { CONFIG } from '../src/constants/config';
 import { useLocation } from '../src/hooks/useLocation';
 import { useReports } from '../src/hooks/useReports';
+import { useVerification } from '../src/hooks/useVerification';
 import { NotificationService } from '../src/services/Notification/NotificationService';
 import type { CommunityReport } from '../src/services/Report/ReportService';
 import { ReportService } from '../src/services/Report/ReportService';
 
 export default function HomeScreen() {
   const { location, loading, error, refreshLocation } = useLocation();
-  const { reports, loading: reportsLoading, generateSampleData, clearAllData } = useReports();
+  const { reports, loading: reportsLoading, generateSampleData, clearAllData, refreshReports } = useReports();
+  const { verificationStats, getTrustLevelInfo, clearAllData: clearVerificationData } = useVerification();
   const [showMap, setShowMap] = useState(true);
   const [servicesInitialized, setServicesInitialized] = useState(false);
 
@@ -53,10 +55,19 @@ export default function HomeScreen() {
           text: 'Generate Sample Reports', 
           onPress: () => location && generateSampleData(location)
         },
+        {
+          text: 'Generate Sample Verifications',
+          onPress: () => location && generateSampleVerifications()
+        },
         { 
-          text: 'Clear All Data', 
+          text: 'Clear Report Data', 
           style: 'destructive',
           onPress: clearAllData
+        },
+        {
+          text: 'Clear Verification Data',
+          style: 'destructive', 
+          onPress: () => clearVerificationData()
         },
         { 
           text: 'Toggle Map', 
@@ -65,8 +76,91 @@ export default function HomeScreen() {
         {
           text: 'Test Notification',
           onPress: () => testNotification()
+        },
+        {
+          text: 'Show Verification Stats',
+          onPress: () => showVerificationStats()
         }
       ]
+    );
+  };
+
+  const generateSampleVerifications = async () => {
+    if (!location) {
+      Alert.alert('Location Required', 'Enable location to generate sample verifications.');
+      return;
+    }
+
+    try {
+      const userLocation = location as { latitude: number; longitude: number };
+      
+      // Generate some sample reports first if none exist
+      if (reports.length === 0) {
+        await generateSampleData(userLocation);
+        // Wait a bit for reports to be generated
+        await new Promise(resolve => setTimeout(resolve, 500));
+      }
+
+      // Get updated reports
+      const activeReports = await ReportService.getActiveReports();
+      
+      if (activeReports.length === 0) {
+        Alert.alert('No Reports', 'Generate sample reports first.');
+        return;
+      }
+
+      // Simulate community verifications for existing reports
+      const { VerificationService } = await import('../src/services/Verification/VerificationService');
+      
+      for (let i = 0; i < Math.min(3, activeReports.length); i++) {
+        const report = activeReports[i];
+        
+        // Simulate 1-3 verifications per report from different users
+        const verificationCount = Math.floor(Math.random() * 3) + 1;
+        
+        for (let j = 0; j < verificationCount; j++) {
+          // Create slight location variations to simulate different users
+          const verifierLocation = {
+            latitude: userLocation.latitude + (Math.random() - 0.5) * 0.01,
+            longitude: userLocation.longitude + (Math.random() - 0.5) * 0.01
+          };
+          
+          try {
+            await VerificationService.verifyReport(
+              report.id,
+              report.location,
+              report.timestamp,
+              verifierLocation
+            );
+          } catch (error) {
+            console.log('Simulation verification already exists or failed:', error);
+          }
+        }
+      }
+
+      Alert.alert(
+        'Sample Verifications Generated',
+        'Created sample verifications for testing. Check the Recent Activity screen to see verification indicators!'
+      );
+      
+      // Refresh reports to show updated verification status
+      await refreshReports();
+      
+    } catch (error) {
+      console.error('Error generating sample verifications:', error);
+      Alert.alert('Error', 'Failed to generate sample verifications.');
+    }
+  };
+
+  const showVerificationStats = () => {
+    const trustInfo = getTrustLevelInfo(verificationStats.trustLevel);
+    Alert.alert(
+      'Verification Statistics',
+      `Trust Level: ${trustInfo.label}\n` +
+      `Trust Score: ${(verificationStats.userTrustScore * 100).toFixed(1)}%\n` +
+      `Verifications Submitted: ${verificationStats.verificationsSubmitted}\n` +
+      `Total Community Verifications: ${verificationStats.totalVerifications}\n\n` +
+      `${trustInfo.description}`
     );
   };
 
@@ -144,6 +238,19 @@ export default function HomeScreen() {
                 Anonymized location • {reports.length} active reports
                 {servicesInitialized && ' • Push notifications enabled'}
               </Text>
+              {servicesInitialized && verificationStats && (
+                <View style={styles.verificationStatus}>
+                  <View style={styles.verificationItem}>
+                    <Ionicons name={getTrustLevelInfo(verificationStats.trustLevel).icon} size={14} color={getTrustLevelInfo(verificationStats.trustLevel).color} />
+                    <Text style={[styles.verificationText, { color: getTrustLevelInfo(verificationStats.trustLevel).color }]}>
+                      {getTrustLevelInfo(verificationStats.trustLevel).label}
+                    </Text>
+                  </View>
+                  <Text style={styles.verificationSubtext}>
+                    {verificationStats.verificationsSubmitted} verifications submitted
+                  </Text>
+                </View>
+              )}
             </View>
           ) : (
             <View>
@@ -401,5 +508,23 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: '600',
+  },
+  verificationStatus: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 12,
+  },
+  verificationItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginRight: 12,
+  },
+  verificationText: {
+    color: '#CBD5E1',
+    fontSize: 14,
+  },
+  verificationSubtext: {
+    color: '#94A3B8',
+    fontSize: 12,
   },
 }); 
