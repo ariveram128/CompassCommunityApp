@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -10,29 +10,38 @@ import { useCustomAlert } from '../src/hooks/useCustomAlert';
 import { useLocation } from '../src/hooks/useLocation';
 import { useReports } from '../src/hooks/useReports';
 import { useVerification } from '../src/hooks/useVerification';
+import { ErrorService } from '../src/services/Error/ErrorService';
 import { NotificationService } from '../src/services/Notification/NotificationService';
 import type { CommunityReport } from '../src/services/Report/ReportService';
 import { ReportService } from '../src/services/Report/ReportService';
+import { DevUtils } from '../src/utils/DevUtils';
 
 type AlertActionStyle = 'default' | 'destructive' | 'cancel' | 'primary';
 
 export default function HomeScreen() {
-  const { location, loading, error, refreshLocation } = useLocation();
-  const { reports, loading: reportsLoading, generateSampleData, clearAllData, refreshReports } = useReports();
+  const { reports, loading, error, refreshReports, generateSampleData, clearAllData } = useReports();
+  const { location, permissions, requestPermissions, refreshLocation } = useLocation();
   const { verificationStats, getTrustLevelInfo, clearAllData: clearVerificationData } = useVerification();
   const { showAlert, AlertComponent } = useCustomAlert();
   const [showMap, setShowMap] = useState(true);
   const [servicesInitialized, setServicesInitialized] = useState(false);
 
-  // Initialize services when app starts
+  // Add ref to track last location to prevent infinite updates
+  const lastLocationRef = useRef<{latitude: number; longitude: number} | null>(null);
+
+  // Initialize services
   useEffect(() => {
     const initializeServices = async () => {
       try {
+        DevUtils.log('Starting service initialization...');
+        await ErrorService.initialize();
+        await NotificationService.initialize();
         await ReportService.initialize();
         setServicesInitialized(true);
-        console.log('✅ App services initialized');
+        DevUtils.log('App services initialized');
       } catch (error) {
-        console.error('❌ Failed to initialize app services:', error);
+        DevUtils.error('Failed to initialize services:', error);
+        setServicesInitialized(true); // Still allow app to work
       }
     };
 
@@ -42,13 +51,26 @@ export default function HomeScreen() {
   // Update location for notification service when user location changes
   useEffect(() => {
     if (location && servicesInitialized) {
-      ReportService.setUserLocation(location);
-      console.log('📍 User location updated for notifications');
+      const currentLocation = { 
+        latitude: (location as any).latitude, 
+        longitude: (location as any).longitude 
+      };
+      
+      // Only update if location has changed significantly (>50m to prevent minor GPS drift updates)
+      const lastLocation = lastLocationRef.current;
+      if (!lastLocation || 
+          Math.abs(currentLocation.latitude - lastLocation.latitude) > 0.0005 ||
+          Math.abs(currentLocation.longitude - lastLocation.longitude) > 0.0005) {
+        
+        lastLocationRef.current = currentLocation;
+        ReportService.setUserLocation(currentLocation);
+        DevUtils.log('User location updated for notifications');
+      }
     }
   }, [location, servicesInitialized]);
 
   const handleDeveloperMenu = () => {
-    if (!__DEV__) return;
+    if (!DevUtils.showDeveloperMenu) return;
     
     showAlert(
       'Developer Tools',
@@ -96,6 +118,8 @@ export default function HomeScreen() {
   };
 
   const generateSampleVerifications = async () => {
+    if (!DevUtils.enableSampleData) return;
+    
     if (!location) {
       showAlert(
         'Location Required',
@@ -153,7 +177,7 @@ export default function HomeScreen() {
               verifierLocation
             );
           } catch (error) {
-            console.log('Simulation verification already exists or failed:', error);
+            DevUtils.log('Simulation verification already exists or failed:', error);
           }
         }
       }
@@ -169,7 +193,7 @@ export default function HomeScreen() {
       await refreshReports();
       
     } catch (error) {
-      console.error('Error generating sample verifications:', error);
+      DevUtils.error('Error generating sample verifications:', error);
       showAlert(
         'Error',
         'Failed to generate sample verifications.',
@@ -180,6 +204,8 @@ export default function HomeScreen() {
   };
 
   const showVerificationStats = () => {
+    if (!DevUtils.showDeveloperMenu) return;
+    
     const trustInfo = getTrustLevelInfo(verificationStats.trustLevel);
     const message = 
       `Trust Level: ${trustInfo.label}\n` +
@@ -197,6 +223,8 @@ export default function HomeScreen() {
   };
 
   const testNotification = async () => {
+    if (!DevUtils.showDeveloperMenu) return;
+    
     if (!location) {
       showAlert(
         'Location Required',
@@ -254,9 +282,13 @@ export default function HomeScreen() {
       <ScrollView style={styles.scrollView}>
         {/* Header */}
         <View style={styles.header}>
-          <TouchableOpacity onPress={handleDeveloperMenu} disabled={!__DEV__}>
+          {DevUtils.showDeveloperMenu ? (
+            <TouchableOpacity onPress={handleDeveloperMenu}>
+              <Text style={styles.title}>Compass Community</Text>
+            </TouchableOpacity>
+          ) : (
             <Text style={styles.title}>Compass Community</Text>
-          </TouchableOpacity>
+          )}
           <View style={styles.headerButtons}>
             <TouchableOpacity style={styles.headerButton} onPress={() => router.push('/activity' as any)}>
               <Ionicons name="list-outline" size={20} color="#fff" />
@@ -264,6 +296,11 @@ export default function HomeScreen() {
             <TouchableOpacity style={styles.headerButton} onPress={() => router.push('/settings')}>
               <Ionicons name="settings-outline" size={20} color="#fff" />
             </TouchableOpacity>
+            {DevUtils.showDeveloperMenu && (
+              <TouchableOpacity style={[styles.headerButton, styles.devButton]} onPress={handleDeveloperMenu}>
+                <Ionicons name="code-slash" size={20} color="#6366F1" />
+              </TouchableOpacity>
+            )}
           </View>
         </View>
 
@@ -429,6 +466,9 @@ const styles = StyleSheet.create({
     padding: 8,
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
     borderRadius: 12,
+  },
+  devButton: {
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
   },
   statusCard: {
     backgroundColor: 'rgba(255, 255, 255, 0.1)',

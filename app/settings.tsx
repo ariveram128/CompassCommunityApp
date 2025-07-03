@@ -237,6 +237,46 @@ export default function SettingsScreen() {
           </View>
         </View>
 
+        {/* Legal & Privacy Card */}
+        <View style={styles.card}>
+          <View style={styles.cardHeader}>
+            <Ionicons name="document-text" size={24} color="#6366F1" />
+            <Text style={styles.cardTitle}>Legal & Privacy</Text>
+          </View>
+          
+          <TouchableOpacity 
+            style={styles.settingRow}
+            onPress={() => router.push('/legal' as any)}
+          >
+            <View style={styles.settingContent}>
+              <View style={styles.settingHeader}>
+                <Ionicons name="shield-checkmark" size={20} color="#10B981" />
+                <Text style={styles.settingTitle}>Privacy Policy</Text>
+              </View>
+              <Text style={styles.settingDescription}>
+                Learn how we protect your privacy and what data we do (and don&apos;t) collect
+              </Text>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color="#6366F1" />
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            style={styles.settingRow}
+            onPress={() => router.push('/legal' as any)}
+          >
+            <View style={styles.settingContent}>
+              <View style={styles.settingHeader}>
+                <Ionicons name="document-text" size={20} color="#6366F1" />
+                <Text style={styles.settingTitle}>Terms of Service</Text>
+              </View>
+              <Text style={styles.settingDescription}>
+                Community guidelines and terms for using Compass Community
+              </Text>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color="#6366F1" />
+          </TouchableOpacity>
+        </View>
+
         {/* App Information Card */}
         <View style={[styles.card, { marginBottom: 40 }]}>
           <View style={styles.cardHeader}>

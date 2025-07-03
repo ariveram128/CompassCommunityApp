@@ -1,9 +1,14 @@
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect } from 'react';
+import { ErrorBoundary } from '../src/components/ErrorBoundary';
+import { ErrorService } from '../src/services/Error/ErrorService';
 
 export default function RootLayout() {
   useEffect(() => {
+    // Initialize error handling first
+    ErrorService.initialize();
+
     // Initialize core services on app start
     const initializeServices = async () => {
       try {
@@ -13,6 +18,10 @@ export default function RootLayout() {
         console.log('App services initialized');
       } catch (error) {
         console.error('Failed to initialize app services:', error);
+        ErrorService.logServiceError('App', 'initializeServices', error, {
+          showToUser: false,
+          context: { phase: 'app_startup' }
+        });
       }
     };
 
@@ -20,7 +29,7 @@ export default function RootLayout() {
   }, []);
 
   return (
-    <>
+    <ErrorBoundary>
       <StatusBar style="light" backgroundColor="#1a1a1a" />
       <Stack
         screenOptions={{
@@ -59,7 +68,26 @@ export default function RootLayout() {
             }
           }} 
         />
+        <Stack.Screen 
+          name="activity" 
+          options={{ 
+            title: 'Recent Activity',
+            headerStyle: {
+              backgroundColor: '#2a2a2a',
+            }
+          }} 
+        />
+        <Stack.Screen 
+          name="legal" 
+          options={{ 
+            title: 'Legal & Privacy',
+            headerShown: false,
+            headerStyle: {
+              backgroundColor: '#2a2a2a',
+            }
+          }} 
+        />
       </Stack>
-    </>
+    </ErrorBoundary>
   );
 }
