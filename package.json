@@ -4,11 +4,24 @@
   "version": "1.0.0",
   "scripts": {
     "start": "expo start",
+    "start:production": "expo start --no-dev --minify",
     "reset-project": "node ./scripts/reset-project.js",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "lint": "expo lint"
+    "lint": "expo lint",
+    "build:staging": "eas build --profile staging",
+    "build:production": "eas build --profile production",
+    "build:android:staging": "eas build --profile staging --platform android",
+    "build:android:production": "eas build --profile production --platform android",
+    "build:ios:staging": "eas build --profile staging --platform ios",
+    "build:ios:production": "eas build --profile production --platform ios",
+    "submit:android": "eas submit --platform android",
+    "submit:ios": "eas submit --platform ios",
+    "update:staging": "eas update --branch staging",
+    "update:production": "eas update --branch production",
+    "test": "jest",
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@expo/vector-icons": "^14.1.0",
