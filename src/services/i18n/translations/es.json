@@ -1,0 +1,582 @@
+{
+  "app": {
+    "name": "Compass Community",
+    "tagline": "Plataforma de seguridad comunitaria que respeta la privacidad"
+  },
+  "onboarding": {
+    "welcome": {
+      "title": "Bienvenido a",
+      "appName": "Compass Community",
+      "subtitle": "Plataforma de seguridad comunitaria que respeta la privacidad",
+      "mission": {
+        "title": "Nuestra Misión",
+        "description": "Proporcionar a las comunidades una plataforma segura y anónima para compartir información de seguridad urgente mientras protegemos la privacidad del usuario y mantenemos el cumplimiento legal."
+      },
+      "features": {
+        "title": "¿Por qué Compass Community?",
+        "anonymous": {
+          "title": "Anónimo",
+          "description": "Sin cuentas, perfiles o recopilación de datos personales"
+        },
+        "secure": {
+          "title": "Seguro", 
+          "description": "Ubicación anonimizada y datos que se eliminan automáticamente"
+        },
+        "community": {
+          "title": "Comunidad",
+          "description": "Alertas de seguridad en tiempo real de tus vecinos"
+        },
+        "temporary": {
+          "title": "Temporal",
+          "description": "Todos los reportes se eliminan automáticamente después de 4 horas"
+        }
+      },
+      "promise": {
+        "title": "Nuestra Promesa",
+        "description": "Tu seguridad y privacidad son nuestras principales prioridades. No recopilamos",
+        "highlight": "cero información personal",
+        "description2": "y mantenemos todos los datos en tu dispositivo. Esta aplicación fue construida por y para comunidades que entienden la importancia de la privacidad digital."
+      },
+      "action": {
+        "title": "¿Listo para unirte a tu red de seguridad comunitaria?",
+        "getStarted": "Comenzar",
+        "skip": "Saltar por ahora"
+      },
+      "progress": "Paso 1 de 5"
+    },
+    "locationPermission": {
+      "title": "Servicios de Ubicación",
+      "subtitle": "Compartir ubicación anónima para alertas comunitarias",
+      "permissionDenied": "El acceso a la ubicación es necesario para las características de seguridad comunitaria. Puedes habilitarlo más tarde en Configuración.",
+      "permissionError": "Error al solicitar permiso de ubicación. Puedes habilitarlo más tarde en Configuración.",
+      "why": {
+        "title": "¿Por qué Acceso a la Ubicación?",
+        "communitySafety": {
+          "title": "Seguridad Comunitaria",
+          "description": "Recibe alertas sobre preocupaciones de seguridad en tu área inmediata"
+        },
+        "relevantAlerts": {
+          "title": "Alertas Relevantes", 
+          "description": "Solo ve reportes dentro de 8km de tu ubicación actual"
+        },
+        "interactiveMap": {
+          "title": "Mapa Interactivo",
+          "description": "Ve reportes comunitarios en un mapa centrado en tu área"
+        }
+      },
+      "privacy": {
+        "title": "Tu Privacidad Está Protegida",
+        "anonymization": {
+          "title": "Anonimización de Ubicación:",
+          "description": "Las coordenadas GPS se redondean a cuadrados de ~100m"
+        },
+        "localStorage": {
+          "title": "Almacenamiento Local:",
+          "description": "Todos los datos permanecen en tu dispositivo - nunca se envían a servidores"
+        },
+        "autoDelete": {
+          "title": "Auto-Eliminación:",
+          "description": "Los datos de ubicación expiran automáticamente después de 4 horas"
+        },
+        "noTracking": {
+          "title": "Sin Rastreo:",
+          "description": "No podemos identificar o rastrear usuarios individuales"
+        }
+      },
+      "technical": {
+        "title": "Detalles Técnicos",
+        "details": "• La precisión de ubicación se reduce intencionalmente para proteger la privacidad\n• Solo se usa el área general (dentro de 100m) para emparejamiento comunitario\n• No se almacena historial de ubicación más allá de la sesión actual\n• Nunca se solicita acceso a ubicación en segundo plano\n• Puedes desactivar los servicios de ubicación en cualquier momento en Configuración"
+      },
+      "actions": {
+        "enable": "Activar Ubicación",
+        "continue": "Continuar Sin Ubicación",
+        "limited": "(Funcionalidad limitada)",
+        "requesting": "Solicitando..."
+      },
+      "progress": "Paso 2 de 5"
+    },
+    "featureTour": {
+      "title": "Características de la App",
+      "map": {
+        "title": "Mapa Comunitario",
+        "description": "Información de seguridad en tiempo real al alcance de tus dedos",
+        "features": {
+          "area": {
+            "title": "Tu Área",
+            "description": "Ve alertas dentro de 8km de tu ubicación"
+          },
+          "reports": {
+            "title": "Reportes de Seguridad", 
+            "description": "Ve diferentes tipos de reportes comunitarios"
+          },
+          "radius": {
+            "title": "Radio de Alerta",
+            "description": "Indicador visual de tu área de cobertura"
+          },
+          "live": {
+            "title": "Actualizaciones en Vivo",
+            "description": "Los reportes expiran automáticamente después de 4 horas"
+          }
+        },
+        "tip": "Toca cualquier marcador de reporte para ver detalles y verificar si estás cerca. El mapa se centra automáticamente en tu ubicación cuando se abre."
+      },
+      "reporting": {
+        "title": "Reportar Actividad",
+        "description": "Ayuda a mantener a tu comunidad informada y segura",
+        "features": {
+          "quick": {
+            "title": "Reporte Rápido",
+            "description": "Envía reportes de seguridad en segundos"
+          },
+          "types": {
+            "title": "Tipos de Reporte",
+            "description": "Retenes, redadas, patrullas y más"
+          },
+          "photo": {
+            "title": "Evidencia Fotográfica",
+            "description": "Adjunto de foto opcional con advertencias de privacidad"
+          },
+          "anonymous": {
+            "title": "Anónimo",
+            "description": "Todos los reportes son completamente anónimos"
+          }
+        },
+        "tip": "Accede a la pantalla de reporte desde el menú principal o usa el botón de acción flotante. Incluye tantos detalles como sea seguro posible."
+      },
+      "verification": {
+        "title": "Verificación Comunitaria",
+        "description": "Ayuda a validar reportes y construir confianza",
+        "features": {
+          "trust": {
+            "title": "Confianza Comunitaria",
+            "description": "Verifica reportes de otros miembros de la comunidad"
+          },
+          "credibility": {
+            "title": "Credibilidad",
+            "description": "Construye reputación a través de reportes precisos"
+          },
+          "priority": {
+            "title": "Niveles de Prioridad",
+            "description": "Los reportes de alta prioridad obtienen mayor cobertura"
+          },
+          "quick": {
+            "title": "Acción Rápida",
+            "description": "Verifica reportes con un simple toque"
+          }
+        },
+        "tip": "Solo verifica reportes que puedas confirmar personalmente. Tu verificación ayuda a la comunidad a evaluar la precisión del reporte."
+      },
+      "navigation": {
+        "previous": "Anterior",
+        "next": "Siguiente",
+        "continue": "Continuar"
+      },
+      "quickTip": "Consejo Rápido",
+      "progress": "Paso 3 de 5"
+    },
+    "privacy": {
+      "title": "Privacidad Primero",
+      "subtitle": "Tu Privacidad Importa",
+      "description": "Construido con los más altos estándares de privacidad para comunidades vulnerables",
+      "principles": {
+        "title": "Nuestros Principios de Privacidad",
+        "zeroData": {
+          "title": "Cero Recopilación de Datos",
+          "description": "No recopilamos absolutamente ninguna información personal. Sin nombres, correos electrónicos, números de teléfono o cuentas de usuario."
+        },
+        "localFirst": {
+          "title": "Almacenamiento Local Primero",
+          "description": "Todos tus datos permanecen en tu dispositivo. Los reportes y configuraciones nunca salen de tu teléfono."
+        },
+        "anonymization": {
+          "title": "Anonimización de Ubicación", 
+          "description": "Tu ubicación precisa nunca se almacena. Usamos cuadrados de 100m para proteger tu privacidad."
+        },
+        "autoDelete": {
+          "title": "Eliminación Automática",
+          "description": "Todos los reportes expiran y se eliminan automáticamente después de 4 horas. Nada es permanente."
+        }
+      },
+      "safeguards": {
+        "title": "Protecciones Técnicas",
+        "encryption": {
+          "title": "Almacenamiento Encriptado:",
+          "description": "Todos los datos locales están encriptados usando algoritmos estándar de la industria"
+        },
+        "analytics": {
+          "title": "Sin Analíticas:",
+          "description": "Cero píxeles de rastreo, reportes de errores o analíticas de uso"
+        },
+        "openSource": {
+          "title": "Código Abierto:",
+          "description": "El código es públicamente auditable para transparencia"
+        },
+        "thirdParties": {
+          "title": "Sin Terceros:",
+          "description": "Sin servicios externos, anuncios o corredores de datos"
+        }
+      },
+      "legal": {
+        "title": "Protección Legal",
+        "description": "Esta aplicación fue diseñada específicamente para comunidades inmigrantes y vulnerables que pueden enfrentar riesgos legales. Por diseño, no podemos proporcionar datos de usuario a las fuerzas del orden o agencias gubernamentales porque no los recopilamos en primer lugar.",
+        "highlight": "no los recopilamos en primer lugar",
+        "subtitle": "Tu seguridad y protección legal fueron nuestras principales prioridades durante el desarrollo."
+      },
+      "dataUsage": {
+        "title": "Qué Datos Usamos Realmente",
+        "locationGrid": {
+          "title": "Cuadrícula de Ubicación Anonimizada",
+          "description": "Cuadrados de ~100m para emparejamiento comunitario (ej., \"Cuadro 42A\" en lugar de coordenadas precisas)"
+        },
+        "reportContent": {
+          "title": "Contenido del Reporte",
+          "description": "Información de seguridad que eliges compartir con la comunidad (almacenada solo localmente)"
+        },
+        "preferences": {
+          "title": "Preferencias de la App",
+          "description": "Configuraciones y preferencias para mejorar tu experiencia (almacenadas solo localmente)"
+        }
+      },
+      "actions": {
+        "understand": "Entiendo",
+        "policy": "Leer Política de Privacidad"
+      },
+      "actionText": "¿Listo para experimentar la seguridad comunitaria que respeta la privacidad?",
+      "progress": "Paso 4 de 5"
+    },
+    "complete": {
+      "title": "¡Todo Listo!",
+      "subtitle": "Tu aplicación Compass Community está lista para usar",
+      "summary": {
+        "title": "Configuración Completa",
+        "privacy": "Configuraciones de privacidad configuradas",
+        "features": "Características comunitarias activadas",
+        "protocols": "Protocolos de seguridad habilitados",
+        "reporting": "Reportes anónimos listos"
+      },
+      "nextSteps": {
+        "title": "¿Qué Sigue?",
+        "step1": {
+          "title": "Explora el Mapa",
+          "description": "Revisa los reportes comunitarios en tu área"
+        },
+        "step2": {
+          "title": "Envía Tu Primer Reporte",
+          "description": "Ayuda a tu comunidad compartiendo información de seguridad"
+        },
+        "step3": {
+          "title": "Verifica Reportes Comunitarios",
+          "description": "Construye confianza confirmando reportes que puedas verificar"
+        }
+      },
+      "tips": {
+        "title": "Consejos Rápidos",
+        "tip1": "• Los reportes expiran automáticamente después de 4 horas",
+        "tip2": "• Tu ubicación siempre se anonimiza para proteger la privacidad",
+        "tip3": "• Usa el sistema de verificación para construir confianza comunitaria",
+        "tip4": "• Accede a configuraciones en cualquier momento para ajustar preferencias"
+      },
+      "support": {
+        "title": "¿Necesitas Ayuda?",
+        "description": "Visita la pantalla de Configuración para tutoriales, información de privacidad y pautas comunitarias."
+      },
+      "action": "Comenzar a Usar la App",
+      "progress": "¡Configuración Completa!"
+    },
+    "common": {
+      "skip": "Saltar",
+      "back": "Atrás"
+    }
+  },
+  "home": {
+    "status": {
+      "protected": "Protegido",
+      "setupRequired": "Configuración Requerida",
+      "initializing": "Inicializando servicios de ubicación...",
+      "active": "✓ Monitoreo de seguridad comunitaria activo",
+      "enable": "⚠ Activa la ubicación para unirte a la red",
+      "enableButton": "Activar Ubicación",
+      "anonymized": "Ubicación anonimizada",
+      "activeReports": "{{count}} reportes activos",
+      "pushEnabled": "• Notificaciones push habilitadas"
+    },
+    "verification": {
+      "trustLevel": {
+        "high": "Confianza Alta",
+        "medium": "Confianza Media", 
+        "low": "Confianza Baja",
+        "new": "Usuario Nuevo"
+      },
+      "submitted": "{{count}} verificaciones enviadas"
+    },
+    "map": {
+      "title": "Mapa Comunitario",
+      "subtitle": "Reportes de seguridad en tiempo real en tu área",
+      "loading": "Cargando mapa...",
+      "noReports": "No hay reportes activos en tu área",
+      "tapToVerify": "Toca reportes para verificar"
+    },
+    "quickActions": {
+      "title": "Acciones Rápidas",
+      "report": "Reportar Actividad",
+      "map": "Ver Mapa",
+      "settings": "Configuración"
+    },
+    "recentActivity": {
+      "title": "Actividad Reciente",
+      "noReports": "No hay reportes recientes en tu área"
+    }
+  },
+  "report": {
+    "title": "Reportar Actividad",
+    "subtitle": "Ayuda a mantener a tu comunidad segura",
+    "type": {
+      "title": "Tipo de Actividad",
+      "subtitle": "¿Qué tipo de actividad estás reportando?",
+      "checkpoint": "Retén/Bloqueo",
+      "raid": "Redada/Búsqueda",
+      "patrol": "Actividad de Patrulla",
+      "arrest": "Arresto/Detención",
+      "harassment": "Acoso/Intimidación",
+      "other": "Otra Preocupación de Seguridad"
+    },
+    "urgency": {
+      "title": "Nivel de Urgencia",
+      "subtitle": "¿Qué tan urgente es esta situación?",
+      "low": "Baja",
+      "medium": "Media", 
+      "high": "Alta",
+      "critical": "Crítica"
+    },
+    "description": {
+      "title": "Descripción (Opcional)",
+      "subtitle": "Agrega cualquier detalle relevante que pueda ayudar a la comunidad",
+      "placeholder": "ej., descripciones de vehículos, uniformes, detalles específicos de ubicación...",
+      "characterCount": "{{count}}/200 caracteres"
+    },
+    "photo": {
+      "title": "Evidencia Fotográfica (Opcional)",
+      "subtitle": "La evidencia visual puede ayudar a la comunidad a evaluar la situación",
+      "warning": "⚠️ Advertencia: Las fotos pueden contener información identificativa",
+      "add": "Agregar Foto",
+      "change": "Cambiar Foto",
+      "remove": "Eliminar Foto"
+    },
+    "location": {
+      "title": "Confirmación de Ubicación",
+      "subtitle": "Confirma que este reporte es para tu ubicación actual",
+      "anonymized": "Tu ubicación será anonimizada a un cuadro de ~100m",
+      "change": "Usar Ubicación Diferente"
+    },
+    "privacy": {
+      "title": "Aviso de Privacidad",
+      "anonymous": "• Todos los reportes son completamente anónimos",
+      "expires": "• Los reportes expiran automáticamente después de 4 horas", 
+      "encrypted": "• Todos los datos están encriptados y almacenados localmente",
+      "noTracking": "• No se recopila ni transmite información personal"
+    },
+    "actions": {
+      "submit": "Enviar Reporte",
+      "submitting": "Enviando...",
+      "cancel": "Cancelar"
+    },
+    "success": {
+      "title": "Reporte Enviado",
+      "message": "Gracias por ayudar a mantener la comunidad segura. Tu reporte anónimo ha sido compartido con miembros cercanos de la comunidad.",
+      "reportId": "ID del Reporte: {{id}}",
+      "viewMap": "Ver en Mapa",
+      "newReport": "Enviar Nuevo Reporte",
+      "done": "Hecho"
+    }
+  },
+  "settings": {
+    "title": "Configuración",
+    "tutorialInfo": "El tutorial aún no está implementado, pero te guiará a través de las características de la aplicación.",
+    "clearDataTitle": "Borrar Todos los Datos",
+    "clearDataMessage": "Esto eliminará permanentemente todos los reportes, configuraciones y preferencias de este dispositivo. Esta acción no se puede deshacer.",
+    "clearDataConfirm": "Borrar Datos",
+    "dataCleared": "Todos los datos se han borrado exitosamente.",
+    "resetOnboardingMessage": "Esto reiniciará el flujo de introducción de la aplicación para que puedas ver las pantallas de bienvenida nuevamente.",
+    "resetOnboardingConfirm": "Reiniciar",
+    "onboardingReset": "La introducción se ha reiniciado. Cierra y vuelve a abrir la aplicación para ver el tutorial nuevamente.",
+    "language": {
+      "title": "Language / Idioma",
+      "subtitle": "Elige tu idioma preferido",
+      "english": "English",
+      "spanish": "Español"
+    },
+    "privacy": {
+      "title": "Configuración de Privacidad",
+      "location": "Servicios de Ubicación",
+      "locationSubtitle": "Habilita ubicación para características comunitarias",
+      "notifications": "Notificaciones Push", 
+      "notificationsSubtitle": "Recibe alertas de seguridad en tu área",
+      "dataStorage": "Almacenamiento de Datos Local",
+      "dataStorageSubtitle": "Gestiona reportes y configuraciones almacenados localmente"
+    },
+    "community": {
+      "title": "Configuración de Comunidad",
+      "verification": "Verificación de Reportes",
+      "verificationSubtitle": "Ayuda a verificar reportes comunitarios",
+      "alertRadius": "Radio de Alerta",
+      "alertRadiusSubtitle": "Distancia para recibir alertas de seguridad"
+    },
+    "legal": {
+      "title": "Legal y Privacidad",
+      "privacyPolicy": "Política de Privacidad",
+      "termsOfService": "Términos de Servicio",
+      "openSource": "Licencias de Código Abierto"
+    },
+    "support": {
+      "title": "Soporte e Información",
+      "tutorial": "Tutorial de la App",
+      "guidelines": "Pautas Comunitarias",
+      "contact": "Contactar Soporte",
+      "version": "Versión {{version}}"
+    },
+    "developer": {
+      "title": "Opciones de Desarrollador",
+      "showOnboarding": "Mostrar Introducción",
+      "resetOnboarding": "Reiniciar Introducción",
+      "clearData": "Borrar Todos los Datos"
+    },
+    "about": {
+      "title": "Acerca de Compass Community",
+      "description": "Una aplicación de seguridad comunitaria que respeta la privacidad, diseñada para ayudar a las comunidades a mantenerse informadas y protegidas. Construida con amor por la seguridad comunitaria y los derechos digitales.",
+      "version": "Versión {{version}} (Compilación de Desarrollo)"
+    }
+  },
+  "legal": {
+    "privacyPolicy": {
+      "title": "Política de Privacidad",
+      "dataCollection": {
+        "title": "Recopilación de Datos",
+        "none": "NO recopilamos información personal en absoluto:",
+        "noNames": "• Sin nombres, correos o información de contacto",
+        "noAccounts": "• Sin cuentas de usuario o perfiles", 
+        "noTracking": "• Sin rastreo o análisis de comportamiento",
+        "noIdentifiers": "• Sin identificadores de dispositivo o huellas digitales"
+      },
+      "locationData": {
+        "title": "Datos de Ubicación",
+        "anonymized": "La información de ubicación se anonimiza:",
+        "gridSquares": "• Convertida a cuadros de ~100m",
+        "noHistory": "• No se almacena historial de ubicación",
+        "autoExpire": "• Todos los datos de ubicación expiran después de 4 horas",
+        "noTransmission": "• Nunca se transmiten a servidores externos"
+      },
+      "dataStorage": {
+        "title": "Almacenamiento de Datos",
+        "local": "Todos los datos se almacenan localmente en tu dispositivo:",
+        "encrypted": "• Encriptación estándar de la industria",
+        "noServers": "• No se transmiten datos a servidores externos",
+        "autoPurge": "• Purga automática de datos",
+        "deviceOnly": "• Todos los datos almacenados localmente en tu dispositivo"
+      },
+      "controls": {
+        "title": "Tus Controles",
+        "disable": "• Desactiva servicios de ubicación en cualquier momento",
+        "clear": "• Borra todos los datos locales",
+        "notifications": "• Controla todos los tipos de notificación",
+        "uninstall": "• Desinstalar elimina todos los datos"
+      },
+      "summary": "Resumen: Protegemos tu privacidad al no recopilar tu información personal en primer lugar."
+    },
+    "termsOfService": {
+      "title": "Términos de Servicio",
+      "mission": {
+        "title": "Misión de Seguridad Comunitaria",
+        "description": "Compass Community mejora la seguridad comunitaria a través del intercambio de información anónimo que respeta la privacidad."
+      },
+      "permitted": {
+        "title": "Usos Permitidos",
+        "report": "• Reportar preocupaciones legítimas de seguridad comunitaria",
+        "receive": "• Recibir alertas de seguridad basadas en ubicación",
+        "verify": "• Verificar reportes que hayas presenciado personalmente",
+        "access": "• Acceder a información de seguridad comunitaria"
+      },
+      "prohibited": {
+        "title": "Usos Prohibidos",
+        "false": "• Enviar reportes falsos o engañosos",
+        "identify": "• Intentar identificar o rastrear otros usuarios",
+        "commercial": "• Usar para propósitos comerciales",
+        "harass": "• Enviar contenido acosador o discriminatorio",
+        "illegal": "• Usar para propósitos ilegales"
+      },
+      "guidelines": {
+        "title": "Pautas de Reporte",
+        "goodFaith": "Buena Fe: Los reportes deben basarse en observaciones reales",
+        "safety": "Enfoque en Seguridad: El contenido debe relacionarse con preocupaciones legítimas de seguridad",
+        "respectful": "Respetuoso: Mantén comunicación respetuosa"
+      },
+      "emergency": {
+        "title": "⚠ Aviso de Emergencia",
+        "description": "Esta aplicación NO es un servicio de emergencia. Para emergencias inmediatas, siempre llama a los servicios de emergencia locales (911 en EE.UU.)."
+      },
+      "standards": {
+        "title": "Estándares Comunitarios",
+        "benefit": "• Participa para el beneficio comunitario",
+        "verify": "• Verifica solo reportes que puedas confirmar razonablemente",
+        "respect": "• Respeta la privacidad y seguridad de otros",
+        "laws": "• Sigue todas las leyes aplicables"
+      },
+      "agreement": "Al usar Compass Community, aceptas estos términos y nuestro enfoque que respeta la privacidad."
+    }
+  },
+  "activity": {
+    "title": "Actividad Comunitaria",
+    "filters": {
+      "all": "Todos los Reportes",
+      "verified": "Solo Verificados",
+      "recent": "Últimas 24 Horas",
+      "nearby": "Solo Cercanos"
+    },
+    "noActivity": "No hay actividad comunitaria en tu área",
+    "loadMore": "Cargar Más",
+    "refreshing": "Actualizando..."
+  },
+  "verification": {
+    "title": "Verificar Reporte",
+    "question": "¿Puedes confirmar este reporte?",
+    "options": {
+      "yes": "Sí, puedo confirmar",
+      "no": "No, parece inexacto", 
+      "unsure": "Inseguro/No puedo confirmar"
+    },
+    "proximity": {
+      "title": "¿Qué tan cerca estás?",
+      "veryClose": "Muy cerca (< 100m)",
+      "close": "Cerca (< 500m)",
+      "nearby": "Cercano (< 1km)",
+      "distant": "Distante (> 1km)"
+    },
+    "confidence": {
+      "title": "Nivel de Confianza",
+      "high": "Alto - Lo vi directamente",
+      "medium": "Medio - Información indirecta confiable",
+      "low": "Bajo - Incierto"
+    },
+    "submit": "Enviar Verificación",
+    "thanks": "¡Gracias por ayudar a la comunidad!"
+  },
+  "errors": {
+    "general": "Ocurrió un error",
+    "network": "Error de conexión de red",
+    "location": "Error de acceso a ubicación",
+    "permission": "Permiso denegado",
+    "retry": "Intentar de Nuevo",
+    "reload": "Reiniciar App"
+  },
+  "common": {
+    "ok": "OK",
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "loading": "Cargando...",
+    "error": "Error",
+    "success": "Éxito",
+    "warning": "Advertencia",
+    "info": "Información"
+  }
+} 

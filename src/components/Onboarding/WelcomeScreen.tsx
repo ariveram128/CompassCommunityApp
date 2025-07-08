@@ -2,6 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTranslation } from '../../hooks/useTranslation';
 
 interface WelcomeScreenProps {
   onNext: () => void;
@@ -9,6 +10,8 @@ interface WelcomeScreenProps {
 }
 
 export function WelcomeScreen({ onNext, onSkip }: WelcomeScreenProps) {
+  const { t } = useTranslation();
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.gradient}>
@@ -21,35 +24,35 @@ export function WelcomeScreen({ onNext, onSkip }: WelcomeScreenProps) {
               </View>
             </View>
             
-            <Text style={styles.title}>Welcome to</Text>
-            <Text style={styles.appName}>Compass Community</Text>
+            <Text style={styles.title}>{t('onboarding.welcome.title')}</Text>
+            <Text style={styles.appName}>{t('onboarding.welcome.appName')}</Text>
             <Text style={styles.subtitle}>
-              Privacy-first community safety platform
+              {t('onboarding.welcome.subtitle')}
             </Text>
           </View>
 
           {/* Mission Statement */}
           <View style={styles.missionSection}>
             <View style={styles.missionCard}>
-              <Text style={styles.missionTitle}>Our Mission</Text>
+              <Text style={styles.missionTitle}>{t('onboarding.welcome.mission.title')}</Text>
               <Text style={styles.missionText}>
-                Provide communities with a secure, anonymous platform to share time-sensitive safety information while protecting user privacy and maintaining legal compliance.
+                {t('onboarding.welcome.mission.description')}
               </Text>
             </View>
           </View>
 
           {/* Key Features */}
           <View style={styles.featuresSection}>
-            <Text style={styles.sectionTitle}>Why Compass Community?</Text>
+            <Text style={styles.sectionTitle}>{t('onboarding.welcome.features.title')}</Text>
             
             <View style={styles.featureGrid}>
               <View style={styles.featureItem}>
                 <View style={[styles.featureIcon, { backgroundColor: '#6366F1' }]}>
                   <Ionicons name="eye-off" size={24} color="#ffffff" />
                 </View>
-                <Text style={styles.featureTitle}>Anonymous</Text>
+                <Text style={styles.featureTitle}>{t('onboarding.welcome.features.anonymous.title')}</Text>
                 <Text style={styles.featureDescription}>
-                  No accounts, profiles, or personal data collection
+                  {t('onboarding.welcome.features.anonymous.description')}
                 </Text>
               </View>
 
@@ -57,9 +60,9 @@ export function WelcomeScreen({ onNext, onSkip }: WelcomeScreenProps) {
                 <View style={[styles.featureIcon, { backgroundColor: '#EF4444' }]}>
                   <Ionicons name="lock-closed" size={24} color="#ffffff" />
                 </View>
-                <Text style={styles.featureTitle}>Secure</Text>
+                <Text style={styles.featureTitle}>{t('onboarding.welcome.features.secure.title')}</Text>
                 <Text style={styles.featureDescription}>
-                  Location anonymized and data auto-expires
+                  {t('onboarding.welcome.features.secure.description')}
                 </Text>
               </View>
 
@@ -67,9 +70,9 @@ export function WelcomeScreen({ onNext, onSkip }: WelcomeScreenProps) {
                 <View style={[styles.featureIcon, { backgroundColor: '#F59E0B' }]}>
                   <Ionicons name="people" size={24} color="#ffffff" />
                 </View>
-                <Text style={styles.featureTitle}>Community</Text>
+                <Text style={styles.featureTitle}>{t('onboarding.welcome.features.community.title')}</Text>
                 <Text style={styles.featureDescription}>
-                  Real-time safety alerts from your neighbors
+                  {t('onboarding.welcome.features.community.description')}
                 </Text>
               </View>
 
@@ -77,9 +80,9 @@ export function WelcomeScreen({ onNext, onSkip }: WelcomeScreenProps) {
                 <View style={[styles.featureIcon, { backgroundColor: '#8B5CF6' }]}>
                   <Ionicons name="time" size={24} color="#ffffff" />
                 </View>
-                <Text style={styles.featureTitle}>Temporary</Text>
+                <Text style={styles.featureTitle}>{t('onboarding.welcome.features.temporary.title')}</Text>
                 <Text style={styles.featureDescription}>
-                  All reports automatically deleted after 4 hours
+                  {t('onboarding.welcome.features.temporary.description')}
                 </Text>
               </View>
             </View>
@@ -90,10 +93,10 @@ export function WelcomeScreen({ onNext, onSkip }: WelcomeScreenProps) {
             <View style={styles.privacyCard}>
               <View style={styles.privacyHeader}>
                 <Ionicons name="heart" size={28} color="#EF4444" />
-                <Text style={styles.privacyTitle}>Our Promise</Text>
+                <Text style={styles.privacyTitle}>{t('onboarding.welcome.promise.title')}</Text>
               </View>
               <Text style={styles.privacyText}>
-                Your safety and privacy are our top priorities. We collect <Text style={styles.highlight}>zero personal information</Text> and keep all data on your device. This app was built by and for communities who understand the importance of digital privacy.
+                {t('onboarding.welcome.promise.description')} <Text style={styles.highlight}>{t('onboarding.welcome.promise.highlight')}</Text> {t('onboarding.welcome.promise.description2')}
               </Text>
             </View>
           </View>
@@ -101,19 +104,19 @@ export function WelcomeScreen({ onNext, onSkip }: WelcomeScreenProps) {
           {/* Action Buttons */}
           <View style={styles.actionSection}>
             <Text style={styles.actionText}>
-              Ready to join your community safety network?
+              {t('onboarding.welcome.action.title')}
             </Text>
             
             <View style={styles.buttonContainer}>
               <TouchableOpacity style={styles.primaryButton} onPress={onNext}>
                 <View style={styles.primaryButtonContent}>
-                  <Text style={styles.primaryButtonText}>Get Started</Text>
+                  <Text style={styles.primaryButtonText}>{t('onboarding.welcome.action.getStarted')}</Text>
                   <Ionicons name="arrow-forward" size={20} color="#ffffff" />
                 </View>
               </TouchableOpacity>
               
               <TouchableOpacity onPress={onSkip}>
-                <Text style={styles.skipButton}>Skip for now</Text>
+                <Text style={styles.skipButton}>{t('onboarding.welcome.action.skip')}</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -127,7 +130,7 @@ export function WelcomeScreen({ onNext, onSkip }: WelcomeScreenProps) {
               <View style={styles.dot} />
               <View style={styles.dot} />
             </View>
-            <Text style={styles.progressText}>Step 1 of 5</Text>
+            <Text style={styles.progressText}>{t('onboarding.welcome.progress')}</Text>
           </View>
         </ScrollView>
       </View>

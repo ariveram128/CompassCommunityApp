@@ -73,6 +73,15 @@ const getConfig = () => {
     
     // Report Types
     REPORT_TYPES: {
+      ICE_CHECKPOINT: 'ICE_CHECKPOINT',
+      ICE_RAID: 'ICE_RAID',
+      ICE_PATROL: 'ICE_PATROL',
+      ICE_DETENTION: 'ICE_DETENTION',
+      COMMUNITY_SUPPORT: 'COMMUNITY_SUPPORT'
+    },
+  
+    // Report Type Definitions
+    REPORT_TYPE_DEFINITIONS: {
       ICE_CHECKPOINT: {
         label: 'Checkpoint',
         color: '#EF4444',
@@ -82,25 +91,25 @@ const getConfig = () => {
       ICE_RAID: {
         label: 'Raid Activity',
         color: '#DC2626',
-        icon: 'warning',
+        icon: 'alert-outline',
         priority: 'high'
       },
       ICE_PATROL: {
         label: 'Patrol Activity',
         color: '#F59E0B',
-        icon: 'eye',
+        icon: 'car-outline',
         priority: 'medium'
       },
       ICE_DETENTION: {
         label: 'Detention Activity',
-        color: '#B91C1C',
-        icon: 'lock-closed',
+        color: '#DC2626',
+        icon: 'hand-left-outline',
         priority: 'high'
       },
       COMMUNITY_SUPPORT: {
         label: 'Community Support',
         color: '#10B981',
-        icon: 'heart',
+        icon: 'heart-outline',
         priority: 'low'
       }
     }
@@ -170,6 +179,7 @@ export const {
   ALERT_RADIUS_KM,
   HIGH_PRIORITY_RADIUS_KM,
   REPORT_TYPES,
+  REPORT_TYPE_DEFINITIONS,
   LOCATION_PRECISION,
   LOCATION_UPDATE_INTERVAL
 } = CONFIG;

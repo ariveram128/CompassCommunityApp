@@ -359,7 +359,7 @@ export default function HomeScreen() {
             {DevUtils.showDeveloperMenu && (
               <TouchableOpacity style={[styles.headerButton, styles.devButton]} onPress={handleDeveloperMenu}>
                 <Ionicons name="code-slash" size={20} color="#6366F1" />
-              </TouchableOpacity>
+          </TouchableOpacity>
             )}
           </View>
         </View>
@@ -438,15 +438,15 @@ export default function HomeScreen() {
             </View>
           </View>
         ) : (
-          <View style={styles.mapPlaceholder}>
+        <View style={styles.mapPlaceholder}>
             <Ionicons name="map-outline" size={48} color="#6366F1" />
-            <Text style={styles.mapPlaceholderText}>
+          <Text style={styles.mapPlaceholderText}>
               {location ? 'Interactive Community Map' : 'Enable Location for Map'}
-            </Text>
-            <Text style={styles.mapPlaceholderSubtext}>
+          </Text>
+          <Text style={styles.mapPlaceholderSubtext}>
               Shows anonymized alerts within {CONFIG.ALERT_RADIUS_KM}km radius
-            </Text>
-          </View>
+          </Text>
+        </View>
         )}
 
         {/* Privacy Features */}
@@ -472,7 +472,7 @@ export default function HomeScreen() {
             <View style={styles.privacyFeature}>
               <Ionicons name="notifications" size={16} color="#10B981" />
               <Text style={styles.privacyText}>Smart location-based alerts</Text>
-            </View>
+              </View>
           )}
         </View>
       </ScrollView>
@@ -681,4 +681,4 @@ const styles = StyleSheet.create({
     color: '#94A3B8',
     fontSize: 12,
   },
-}); 
+});

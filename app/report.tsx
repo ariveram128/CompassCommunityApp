@@ -9,11 +9,11 @@ import { useLocation } from '../src/hooks/useLocation';
 import { useReports } from '../src/hooks/useReports';
 
 const REPORT_TYPES = [
-  { key: 'ICE_CHECKPOINT', label: 'Checkpoint', icon: 'shield' as const, color: '#F59E0B' },
-  { key: 'ICE_RAID', label: 'Raid', icon: 'alert' as const, color: '#EF4444' },
-  { key: 'ICE_PATROL', label: 'Patrol', icon: 'car' as const, color: '#F59E0B' },
-  { key: 'ICE_DETENTION', label: 'Detention', icon: 'hand-left' as const, color: '#DC2626' },
-  { key: 'COMMUNITY_SUPPORT', label: 'Support', icon: 'heart' as const, color: '#10B981' },
+  { key: 'ICE_CHECKPOINT', label: 'Checkpoint', icon: 'shield-outline' as const, color: '#F59E0B' },
+  { key: 'ICE_RAID', label: 'Raid', icon: 'alert-outline' as const, color: '#EF4444' },
+  { key: 'ICE_PATROL', label: 'Patrol', icon: 'car-outline' as const, color: '#F59E0B' },
+  { key: 'ICE_DETENTION', label: 'Detention', icon: 'hand-left-outline' as const, color: '#DC2626' },
+  { key: 'COMMUNITY_SUPPORT', label: 'Support', icon: 'heart-outline' as const, color: '#10B981' },
 ];
 
 const URGENCY_LEVELS = [

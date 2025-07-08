@@ -2,6 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTranslation } from '../../hooks/useTranslation';
 
 interface LocationPermissionScreenProps {
   onNext: () => void;
@@ -17,6 +18,7 @@ export function LocationPermissionScreen({
   onRequestPermission 
 }: LocationPermissionScreenProps) {
   const [isRequesting, setIsRequesting] = useState(false);
+  const { t } = useTranslation();
 
   const handleRequestPermission = async () => {
     setIsRequesting(true);
@@ -26,19 +28,19 @@ export function LocationPermissionScreen({
         onNext();
       } else {
         Alert.alert(
-          'Permission Required',
-          'Location access is needed for community safety features. You can enable it later in Settings.',
+          t('errors.permission'),
+          t('onboarding.locationPermission.permissionDenied'),
           [
-            { text: 'Skip for Now', onPress: onNext },
-            { text: 'Try Again', onPress: handleRequestPermission }
+            { text: t('onboarding.locationPermission.actions.continue'), onPress: onNext },
+            { text: t('common.retry'), onPress: handleRequestPermission }
           ]
         );
       }
     } catch (error) {
       Alert.alert(
-        'Error',
-        'Failed to request location permission. You can enable it later in Settings.',
-        [{ text: 'Continue', onPress: onNext }]
+        t('common.error'),
+        t('onboarding.locationPermission.permissionError'),
+        [{ text: t('onboarding.locationPermission.actions.continue'), onPress: onNext }]
       );
     } finally {
       setIsRequesting(false);
@@ -55,7 +57,7 @@ export function LocationPermissionScreen({
               <Ionicons name="arrow-back" size={24} color="#6B7280" />
             </TouchableOpacity>
             <TouchableOpacity style={styles.skipButton} onPress={onSkip}>
-              <Text style={styles.skipButtonText}>Skip</Text>
+              <Text style={styles.skipButtonText}>{t('onboarding.common.skip')}</Text>
             </TouchableOpacity>
           </View>
 
@@ -67,15 +69,15 @@ export function LocationPermissionScreen({
               </View>
             </View>
             
-            <Text style={styles.title}>Location Services</Text>
+            <Text style={styles.title}>{t('onboarding.locationPermission.title')}</Text>
             <Text style={styles.subtitle}>
-              Anonymous location sharing for community alerts
+              {t('onboarding.locationPermission.subtitle')}
             </Text>
           </View>
 
           {/* Why We Need Location */}
           <View style={styles.explanationSection}>
-            <Text style={styles.sectionTitle}>Why Location Access?</Text>
+            <Text style={styles.sectionTitle}>{t('onboarding.locationPermission.why.title')}</Text>
             
             <View style={styles.reasonsList}>
               <View style={styles.reasonItem}>
@@ -83,9 +85,9 @@ export function LocationPermissionScreen({
                   <Ionicons name="shield-checkmark" size={24} color="#ffffff" />
                 </View>
                 <View style={styles.reasonContent}>
-                  <Text style={styles.reasonTitle}>Community Safety</Text>
+                  <Text style={styles.reasonTitle}>{t('onboarding.locationPermission.why.communitySafety.title')}</Text>
                   <Text style={styles.reasonDescription}>
-                    Receive alerts about safety concerns in your immediate area
+                    {t('onboarding.locationPermission.why.communitySafety.description')}
                   </Text>
                 </View>
               </View>
@@ -95,9 +97,9 @@ export function LocationPermissionScreen({
                   <Ionicons name="notifications" size={24} color="#ffffff" />
                 </View>
                 <View style={styles.reasonContent}>
-                  <Text style={styles.reasonTitle}>Relevant Alerts</Text>
+                  <Text style={styles.reasonTitle}>{t('onboarding.locationPermission.why.relevantAlerts.title')}</Text>
                   <Text style={styles.reasonDescription}>
-                    Only see reports within 8km of your current location
+                    {t('onboarding.locationPermission.why.relevantAlerts.description')}
                   </Text>
                 </View>
               </View>
@@ -107,9 +109,9 @@ export function LocationPermissionScreen({
                   <Ionicons name="map" size={24} color="#ffffff" />
                 </View>
                 <View style={styles.reasonContent}>
-                  <Text style={styles.reasonTitle}>Interactive Map</Text>
+                  <Text style={styles.reasonTitle}>{t('onboarding.locationPermission.why.interactiveMap.title')}</Text>
                   <Text style={styles.reasonDescription}>
-                    View community reports on a map centered on your area
+                    {t('onboarding.locationPermission.why.interactiveMap.description')}
                   </Text>
                 </View>
               </View>
@@ -121,35 +123,35 @@ export function LocationPermissionScreen({
             <View style={styles.privacyCard}>
               <View style={styles.privacyHeader}>
                 <Ionicons name="lock-closed" size={28} color="#EF4444" />
-                <Text style={styles.privacyTitle}>Your Privacy is Protected</Text>
+                <Text style={styles.privacyTitle}>{t('onboarding.locationPermission.privacy.title')}</Text>
               </View>
               
               <View style={styles.protectionsList}>
                 <View style={styles.protectionItem}>
                   <Ionicons name="grid" size={16} color="#10B981" />
                   <Text style={styles.protectionText}>
-                    <Text style={styles.highlight}>Location Anonymization:</Text> GPS coordinates are rounded to ~100m grid squares
+                    <Text style={styles.highlight}>{t('onboarding.locationPermission.privacy.anonymization.title')}</Text> {t('onboarding.locationPermission.privacy.anonymization.description')}
                   </Text>
                 </View>
 
                 <View style={styles.protectionItem}>
                   <Ionicons name="phone-portrait" size={16} color="#10B981" />
                   <Text style={styles.protectionText}>
-                    <Text style={styles.highlight}>Local Storage:</Text> All data stays on your device - never sent to servers
+                    <Text style={styles.highlight}>{t('onboarding.locationPermission.privacy.localStorage.title')}</Text> {t('onboarding.locationPermission.privacy.localStorage.description')}
                   </Text>
                 </View>
 
                 <View style={styles.protectionItem}>
                   <Ionicons name="time" size={16} color="#10B981" />
                   <Text style={styles.protectionText}>
-                    <Text style={styles.highlight}>Auto-Delete:</Text> Location data automatically expires after 4 hours
+                    <Text style={styles.highlight}>{t('onboarding.locationPermission.privacy.autoDelete.title')}</Text> {t('onboarding.locationPermission.privacy.autoDelete.description')}
                   </Text>
                 </View>
 
                 <View style={styles.protectionItem}>
                   <Ionicons name="eye-off" size={16} color="#10B981" />
                   <Text style={styles.protectionText}>
-                    <Text style={styles.highlight}>No Tracking:</Text> We cannot identify or track individual users
+                    <Text style={styles.highlight}>{t('onboarding.locationPermission.privacy.noTracking.title')}</Text> {t('onboarding.locationPermission.privacy.noTracking.description')}
                   </Text>
                 </View>
               </View>
@@ -159,17 +161,13 @@ export function LocationPermissionScreen({
           {/* Technical Details */}
           <View style={styles.technicalSection}>
             <TouchableOpacity style={styles.technicalToggle}>
-              <Text style={styles.technicalTitle}>Technical Details</Text>
+              <Text style={styles.technicalTitle}>{t('onboarding.locationPermission.technical.title')}</Text>
               <Ionicons name="chevron-down" size={20} color="#6B7280" />
             </TouchableOpacity>
             
             <View style={styles.technicalContent}>
               <Text style={styles.technicalText}>
-                • Location precision is intentionally reduced to protect privacy{'\n'}
-                • Only general area (within 100m) is used for community matching{'\n'}
-                • No location history is stored beyond current session{'\n'}
-                • Background location access is never requested{'\n'}
-                • You can disable location services at any time in Settings
+                {t('onboarding.locationPermission.technical.details')}
               </Text>
             </View>
           </View>
@@ -184,10 +182,10 @@ export function LocationPermissionScreen({
               >
                 <View style={[styles.buttonGradient, isRequesting && { backgroundColor: '#6B7280' }]}>
                   {isRequesting ? (
-                    <Text style={styles.primaryButtonText}>Requesting...</Text>
+                    <Text style={styles.primaryButtonText}>{t('onboarding.locationPermission.actions.requesting')}</Text>
                   ) : (
                     <>
-                      <Text style={styles.primaryButtonText}>Enable Location</Text>
+                      <Text style={styles.primaryButtonText}>{t('onboarding.locationPermission.actions.enable')}</Text>
                       <Ionicons name="arrow-forward" size={20} color="#ffffff" />
                     </>
                   )}
@@ -196,10 +194,10 @@ export function LocationPermissionScreen({
               
               <TouchableOpacity style={styles.secondaryButton} onPress={onNext}>
                 <Text style={styles.secondaryButtonText}>
-                  Continue Without Location
+                  {t('onboarding.locationPermission.actions.continue')}
                 </Text>
                 <Text style={styles.secondaryButtonSubtext}>
-                  (Limited functionality)
+                  {t('onboarding.locationPermission.actions.limited')}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -214,7 +212,7 @@ export function LocationPermissionScreen({
               <View style={styles.dot} />
               <View style={styles.dot} />
             </View>
-            <Text style={styles.progressText}>Step 2 of 5</Text>
+            <Text style={styles.progressText}>{t('onboarding.locationPermission.progress')}</Text>
           </View>
         </ScrollView>
       </View>

@@ -1,13 +1,30 @@
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ErrorBoundary } from '../src/components/ErrorBoundary';
 import { ErrorService } from '../src/services/Error/ErrorService';
+// Initialize i18n translations
+import { initI18n } from '../src/services/i18n/i18n';
 
 export default function RootLayout() {
+  const [isI18nReady, setIsI18nReady] = useState(false);
+
   useEffect(() => {
     // Initialize error handling first
     ErrorService.initialize();
+
+    // Initialize i18n
+    const initializeI18n = async () => {
+      try {
+        await initI18n();
+        setIsI18nReady(true);
+        console.log('[App] i18n initialized successfully');
+      } catch (error) {
+        console.error('[App] Failed to initialize i18n:', error);
+        // Still allow app to continue with fallback
+        setIsI18nReady(true);
+      }
+    };
 
     // Initialize core services on app start
     const initializeServices = async () => {
@@ -25,8 +42,17 @@ export default function RootLayout() {
       }
     };
 
-    initializeServices();
+    // Initialize both in parallel
+    Promise.all([
+      initializeI18n(),
+      initializeServices()
+    ]);
   }, []);
+
+  // Don't render anything until i18n is ready
+  if (!isI18nReady) {
+    return null; // or a loading screen
+  }
 
   return (
     <ErrorBoundary>
