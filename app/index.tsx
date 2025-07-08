@@ -1,38 +1,69 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { CommunityMap } from '../src/components/Map';
+import { OnboardingModal } from '../src/components/Onboarding/OnboardingModal';
 import { CONFIG } from '../src/constants/config';
 import { useCustomAlert } from '../src/hooks/useCustomAlert';
 import { useLocation } from '../src/hooks/useLocation';
 import { useReports } from '../src/hooks/useReports';
+import { useTranslation } from '../src/hooks/useTranslation';
 import { useVerification } from '../src/hooks/useVerification';
+import { ErrorService } from '../src/services/Error/ErrorService';
 import { NotificationService } from '../src/services/Notification/NotificationService';
+import { OnboardingService } from '../src/services/Onboarding/OnboardingService';
 import type { CommunityReport } from '../src/services/Report/ReportService';
 import { ReportService } from '../src/services/Report/ReportService';
+import { DevUtils } from '../src/utils/DevUtils';
 
 type AlertActionStyle = 'default' | 'destructive' | 'cancel' | 'primary';
 
 export default function HomeScreen() {
+  const { t, currentLanguage } = useTranslation(); // Add translation hook with currentLanguage for re-renders
   const { location, loading, error, refreshLocation } = useLocation();
-  const { reports, loading: reportsLoading, generateSampleData, clearAllData, refreshReports } = useReports();
-  const { verificationStats, getTrustLevelInfo, clearAllData: clearVerificationData } = useVerification();
+  const { reports, loading: reportsLoading, refreshReports, generateSampleData } = useReports();
+  const { 
+    verificationStats, 
+    canVerifyReport, 
+    verifyReport,
+    getVerificationStrengthInfo,
+    getTrustLevelInfo,
+    loading: verificationLoading
+  } = useVerification();
   const { showAlert, AlertComponent } = useCustomAlert();
-  const [showMap, setShowMap] = useState(true);
+  
   const [servicesInitialized, setServicesInitialized] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  const mapRef = useRef<any>(null);
+  const [showMap, setShowMap] = useState(true);
 
-  // Initialize services when app starts
+  // Add ref to track last location to prevent infinite updates
+  const lastLocationRef = useRef<{latitude: number; longitude: number} | null>(null);
+
+  // Initialize services and check onboarding
   useEffect(() => {
     const initializeServices = async () => {
       try {
+        DevUtils.log('Starting service initialization...');
+        await ErrorService.initialize();
+        await OnboardingService.initialize();
+        await NotificationService.initialize();
         await ReportService.initialize();
         setServicesInitialized(true);
-        console.log('✅ App services initialized');
+        DevUtils.log('App services initialized');
+
+        // Check if we should show onboarding
+        const shouldShow = await OnboardingService.shouldShowOnboarding();
+        if (shouldShow) {
+          DevUtils.log('Showing onboarding to new user');
+          setShowOnboarding(true);
+        }
       } catch (error) {
-        console.error('❌ Failed to initialize app services:', error);
+        DevUtils.error('Failed to initialize services:', error);
+        setServicesInitialized(true); // Still allow app to work
       }
     };
 
@@ -42,38 +73,53 @@ export default function HomeScreen() {
   // Update location for notification service when user location changes
   useEffect(() => {
     if (location && servicesInitialized) {
-      ReportService.setUserLocation(location);
-      console.log('📍 User location updated for notifications');
+      const currentLocation = { 
+        latitude: (location as any).latitude, 
+        longitude: (location as any).longitude 
+      };
+      
+      // Only update if location has changed significantly (>50m to prevent minor GPS drift updates)
+      const lastLocation = lastLocationRef.current;
+      if (!lastLocation || 
+          Math.abs(currentLocation.latitude - lastLocation.latitude) > 0.0005 ||
+          Math.abs(currentLocation.longitude - lastLocation.longitude) > 0.0005) {
+        
+        lastLocationRef.current = currentLocation;
+        ReportService.setUserLocation(currentLocation);
+        DevUtils.log('User location updated for notifications');
+      }
     }
   }, [location, servicesInitialized]);
 
   const handleDeveloperMenu = () => {
-    if (!__DEV__) return;
+    if (!DevUtils.showDeveloperMenu) return;
     
     showAlert(
-      'Developer Tools',
-      'Choose an action for testing:',
+      'Developer Menu',
+      'Development tools and testing utilities',
       [
         { text: 'Cancel', style: 'cancel' as AlertActionStyle },
         { 
-          text: 'Generate Sample Reports', 
-          style: 'default' as AlertActionStyle,
-          onPress: () => location && generateSampleData(location)
-        },
-        {
-          text: 'Generate Sample Verifications',
+          text: 'Generate Sample Data', 
           style: 'default' as AlertActionStyle,
           onPress: () => location && generateSampleVerifications()
         },
         { 
           text: 'Clear Report Data', 
           style: 'destructive' as AlertActionStyle,
-          onPress: clearAllData
+          onPress: async () => {
+            const { ReportService } = await import('../src/services/Report/ReportService');
+            await ReportService.clearAllData();
+            await refreshReports();
+          }
         },
         {
           text: 'Clear Verification Data',
           style: 'destructive' as AlertActionStyle, 
-          onPress: () => clearVerificationData()
+          onPress: async () => {
+            const { VerificationService } = await import('../src/services/Verification/VerificationService');
+            await VerificationService.clearAllData();
+          }
         },
         { 
           text: 'Toggle Map', 
@@ -87,15 +133,107 @@ export default function HomeScreen() {
         },
         {
           text: 'Show Verification Stats',
-          style: 'primary' as AlertActionStyle,
+          style: 'default' as AlertActionStyle,
           onPress: () => showVerificationStats()
+        },
+        {
+          text: 'Reset Language',
+          style: 'default' as AlertActionStyle,
+          onPress: () => resetLanguageToDevice()
+        },
+        {
+          text: 'Show Onboarding Now',
+          style: 'primary' as AlertActionStyle,
+          onPress: () => setShowOnboarding(true)
+        },
+        {
+          text: 'Reset Onboarding',
+          style: 'destructive' as AlertActionStyle,
+          onPress: () => resetOnboarding()
         }
       ],
       { icon: 'code-slash', iconColor: '#6366F1' }
     );
   };
 
+  const resetLanguageToDevice = async () => {
+    try {
+      const { storeLanguage, getDeviceLanguage, changeLanguage } = await import('../src/services/i18n/i18n');
+      const deviceLanguage = getDeviceLanguage();
+      await storeLanguage(deviceLanguage);
+      await changeLanguage(deviceLanguage);
+      
+      showAlert(
+        'Language Reset',
+        `Language reset to device setting: ${deviceLanguage === 'es' ? 'Español' : 'English'}`,
+        [{ text: 'OK', style: 'primary' as AlertActionStyle }],
+        { icon: 'language', iconColor: '#6366F1' }
+      );
+      DevUtils.log('Language reset to device setting:', deviceLanguage);
+    } catch (error) {
+      DevUtils.error('Failed to reset language:', error);
+      showAlert(
+        'Error',
+        'Failed to reset language.',
+        [{ text: 'OK', style: 'primary' as AlertActionStyle }],
+        { icon: 'alert-circle', iconColor: '#EF4444' }
+      );
+    }
+  };
+
+  const resetOnboarding = async () => {
+    try {
+      await OnboardingService.resetOnboarding();
+      
+      // Also clear language preference to re-detect device language
+      const { storeLanguage, getDeviceLanguage, changeLanguage } = await import('../src/services/i18n/i18n');
+      const deviceLanguage = getDeviceLanguage();
+      await storeLanguage(deviceLanguage);
+      
+      // Change to detected language immediately
+      await changeLanguage(deviceLanguage);
+      
+      // Immediately show onboarding after reset
+      setShowOnboarding(true);
+      showAlert(
+        'Onboarding Reset',
+        'Onboarding has been reset and will show now.',
+        [{ text: 'OK', style: 'primary' as AlertActionStyle }],
+        { icon: 'refresh', iconColor: '#10B981' }
+      );
+      DevUtils.log('Onboarding reset by developer');
+    } catch (error) {
+      DevUtils.error('Failed to reset onboarding:', error);
+      showAlert(
+        'Error',
+        'Failed to reset onboarding.',
+        [{ text: 'OK', style: 'primary' as AlertActionStyle }],
+        { icon: 'alert-circle', iconColor: '#EF4444' }
+      );
+    }
+  };
+
+  const handleOnboardingComplete = () => {
+    setShowOnboarding(false);
+    DevUtils.log('User completed onboarding');
+    
+    // Show welcome message
+    showAlert(
+      t('onboarding.complete.welcomeTitle'),
+      t('onboarding.complete.welcomeMessage'),
+      [{ text: t('onboarding.complete.welcomeAction'), style: 'primary' as AlertActionStyle }],
+      { icon: 'checkmark-circle', iconColor: '#10B981' }
+    );
+  };
+
+  const handleOnboardingSkip = () => {
+    setShowOnboarding(false);
+    DevUtils.log('User skipped onboarding');
+  };
+
   const generateSampleVerifications = async () => {
+    if (!DevUtils.enableSampleData) return;
+    
     if (!location) {
       showAlert(
         'Location Required',
@@ -153,7 +291,7 @@ export default function HomeScreen() {
               verifierLocation
             );
           } catch (error) {
-            console.log('Simulation verification already exists or failed:', error);
+            DevUtils.log('Simulation verification already exists or failed:', error);
           }
         }
       }
@@ -169,7 +307,7 @@ export default function HomeScreen() {
       await refreshReports();
       
     } catch (error) {
-      console.error('Error generating sample verifications:', error);
+      DevUtils.error('Error generating sample verifications:', error);
       showAlert(
         'Error',
         'Failed to generate sample verifications.',
@@ -180,6 +318,8 @@ export default function HomeScreen() {
   };
 
   const showVerificationStats = () => {
+    if (!DevUtils.showDeveloperMenu) return;
+    
     const trustInfo = getTrustLevelInfo(verificationStats.trustLevel);
     const message = 
       `Trust Level: ${trustInfo.label}\n` +
@@ -197,6 +337,8 @@ export default function HomeScreen() {
   };
 
   const testNotification = async () => {
+    if (!DevUtils.showDeveloperMenu) return;
+    
     if (!location) {
       showAlert(
         'Location Required',
@@ -254,9 +396,13 @@ export default function HomeScreen() {
       <ScrollView style={styles.scrollView}>
         {/* Header */}
         <View style={styles.header}>
-          <TouchableOpacity onPress={handleDeveloperMenu} disabled={!__DEV__}>
+          {DevUtils.showDeveloperMenu ? (
+            <TouchableOpacity onPress={handleDeveloperMenu}>
+              <Text style={styles.title}>Compass Community</Text>
+            </TouchableOpacity>
+          ) : (
             <Text style={styles.title}>Compass Community</Text>
-          </TouchableOpacity>
+          )}
           <View style={styles.headerButtons}>
             <TouchableOpacity style={styles.headerButton} onPress={() => router.push('/activity' as any)}>
               <Ionicons name="list-outline" size={20} color="#fff" />
@@ -264,6 +410,11 @@ export default function HomeScreen() {
             <TouchableOpacity style={styles.headerButton} onPress={() => router.push('/settings')}>
               <Ionicons name="settings-outline" size={20} color="#fff" />
             </TouchableOpacity>
+            {DevUtils.showDeveloperMenu && (
+              <TouchableOpacity style={[styles.headerButton, styles.devButton]} onPress={handleDeveloperMenu}>
+                <Ionicons name="code-slash" size={20} color="#6366F1" />
+          </TouchableOpacity>
+            )}
           </View>
         </View>
 
@@ -276,20 +427,20 @@ export default function HomeScreen() {
               color={location ? "#10B981" : "#EF4444"} 
             />
             <Text style={styles.statusTitle}>
-              {location ? 'Protected' : 'Setup Required'}
+              {location ? t('home.status.protected') : t('home.status.setupRequired')}
             </Text>
           </View>
           
           {loading ? (
-            <Text style={styles.statusText}>Initializing location services...</Text>
+            <Text style={styles.statusText}>{t('home.status.initializing')}</Text>
           ) : location ? (
             <View>
               <Text style={[styles.statusText, { color: "#10B981" }]}>
-                ✓ Community safety monitoring active
+                {t('home.status.active')}
               </Text>
               <Text style={styles.statusSubtext}>
-                Anonymized location • {reports.length} active reports
-                {servicesInitialized && ' • Push notifications enabled'}
+                {t('home.status.anonymized')} • {t('home.status.activeReports', { count: reports.length })}
+                {servicesInitialized && t('home.status.pushEnabled')}
               </Text>
               {servicesInitialized && verificationStats && (
                 <View style={styles.verificationStatus}>
@@ -300,7 +451,7 @@ export default function HomeScreen() {
                     </Text>
                   </View>
                   <Text style={styles.verificationSubtext}>
-                    {verificationStats.verificationsSubmitted} verifications submitted
+                    {t('home.verification.submitted', { count: verificationStats.verificationsSubmitted })}
                   </Text>
                 </View>
               )}
@@ -308,13 +459,13 @@ export default function HomeScreen() {
           ) : (
             <View>
               <Text style={[styles.statusText, { color: "#EF4444" }]}>
-                ⚠ Enable location to join the network
+                {t('home.status.enable')}
               </Text>
               <TouchableOpacity 
                 style={styles.enableButton}
                 onPress={refreshLocation}
               >
-                <Text style={styles.enableButtonText}>Enable Location</Text>
+                <Text style={styles.enableButtonText}>{t('home.status.enableButton')}</Text>
               </TouchableOpacity>
             </View>
           )}
@@ -329,7 +480,7 @@ export default function HomeScreen() {
         {/* Community Map */}
         {showMap && location ? (
           <View style={styles.mapContainer}>
-            <Text style={styles.sectionTitle}>Community Map</Text>
+            <Text style={styles.sectionTitle}>{t('home.map.title')}</Text>
             <View style={styles.mapWrapper}>
               <CommunityMap
                 userLocation={location}
@@ -341,42 +492,48 @@ export default function HomeScreen() {
             </View>
           </View>
         ) : (
-          <View style={styles.mapPlaceholder}>
+        <View style={styles.mapPlaceholder}>
             <Ionicons name="map-outline" size={48} color="#6366F1" />
-            <Text style={styles.mapPlaceholderText}>
-              {location ? 'Interactive Community Map' : 'Enable Location for Map'}
-            </Text>
-            <Text style={styles.mapPlaceholderSubtext}>
-              Shows anonymized alerts within {CONFIG.ALERT_RADIUS_KM}km radius
-            </Text>
-          </View>
+          <Text style={styles.mapPlaceholderText}>
+              {location ? t('home.map.title') : t('home.map.loading')}
+          </Text>
+          <Text style={styles.mapPlaceholderSubtext}>
+              {t('home.map.subtitle')}
+          </Text>
+        </View>
         )}
 
-        {/* Privacy Features */}
-        <View style={styles.privacyCard}>
-          <Text style={styles.sectionTitle}>🔒 Privacy First Design</Text>
-          <View style={styles.privacyFeature}>
-            <Ionicons name="shield-checkmark" size={16} color="#10B981" />
-            <Text style={styles.privacyText}>Anonymous reporting</Text>
-          </View>
-          <View style={styles.privacyFeature}>
-            <Ionicons name="time" size={16} color="#10B981" />
-            <Text style={styles.privacyText}>Auto-delete after 4 hours</Text>
-          </View>
-          <View style={styles.privacyFeature}>
-            <Ionicons name="location" size={16} color="#10B981" />
-            <Text style={styles.privacyText}>Location anonymized</Text>
-          </View>
-          <View style={styles.privacyFeature}>
-            <Ionicons name="eye-off" size={16} color="#10B981" />
-            <Text style={styles.privacyText}>No tracking</Text>
-          </View>
-          {servicesInitialized && (
-            <View style={styles.privacyFeature}>
-              <Ionicons name="notifications" size={16} color="#10B981" />
-              <Text style={styles.privacyText}>Smart location-based alerts</Text>
+        {/* Emergency Actions */}
+        <View style={styles.emergencyCard}>
+          <Text style={styles.sectionTitle}>🚨 {t('home.emergency.title')}</Text>
+          <Text style={styles.emergencyDescription}>
+            {t('home.emergency.description')}
+          </Text>
+          
+          {/* Panic Button - Coming Soon */}
+          <TouchableOpacity 
+            style={styles.panicButtonPlaceholder}
+            disabled={true}
+          >
+            <View style={styles.panicButtonContent}>
+              <Ionicons name="warning" size={32} color="#94A3B8" />
+              <View style={styles.panicButtonTextContainer}>
+                <Text style={styles.panicButtonTitle}>
+                  {t('home.emergency.panicButton.title')}
+                </Text>
+                <Text style={styles.panicButtonSubtitle}>
+                  {t('home.emergency.panicButton.comingSoon')}
+                </Text>
+              </View>
             </View>
-          )}
+          </TouchableOpacity>
+
+          <View style={styles.emergencyNote}>
+            <Ionicons name="information-circle" size={16} color="#6366F1" />
+            <Text style={styles.emergencyNoteText}>
+              {t('home.emergency.note')}
+            </Text>
+          </View>
         </View>
       </ScrollView>
 
@@ -391,11 +548,16 @@ export default function HomeScreen() {
           onPress={() => location && router.push('/report')}
         >
           <Ionicons name="alert-circle" size={24} color="#fff" />
-          <Text style={styles.reportButtonText}>Report Activity</Text>
+          <Text style={styles.reportButtonText}>{t('home.quickActions.report')}</Text>
         </TouchableOpacity>
       </View>
       
       <AlertComponent />
+      <OnboardingModal
+        visible={showOnboarding}
+        onComplete={handleOnboardingComplete}
+        onSkip={handleOnboardingSkip}
+      />
     </SafeAreaView>
   );
 }
@@ -429,6 +591,9 @@ const styles = StyleSheet.create({
     padding: 8,
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
     borderRadius: 12,
+  },
+  devButton: {
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
   },
   statusCard: {
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
@@ -514,7 +679,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 8,
   },
-  privacyCard: {
+  emergencyCard: {
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
     marginHorizontal: 24,
     padding: 20,
@@ -523,15 +688,54 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.2)',
   },
-  privacyFeature: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 12,
-    gap: 12,
-  },
-  privacyText: {
+  emergencyDescription: {
     color: '#CBD5E1',
     fontSize: 14,
+    marginBottom: 20,
+    lineHeight: 20,
+  },
+  panicButtonPlaceholder: {
+    backgroundColor: 'rgba(239, 68, 68, 0.1)',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(239, 68, 68, 0.2)',
+    opacity: 0.6,
+  },
+  panicButtonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 16,
+  },
+  panicButtonTextContainer: {
+    flex: 1,
+  },
+  panicButtonTitle: {
+    color: '#EF4444',
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 4,
+  },
+  panicButtonSubtitle: {
+    color: '#94A3B8',
+    fontSize: 12,
+  },
+  emergencyNote: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 8,
+    backgroundColor: 'rgba(99, 102, 241, 0.1)',
+    padding: 12,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: 'rgba(99, 102, 241, 0.2)',
+  },
+  emergencyNoteText: {
+    color: '#CBD5E1',
+    fontSize: 12,
+    lineHeight: 16,
+    flex: 1,
   },
   bottomContainer: {
     position: 'absolute',
@@ -576,4 +780,4 @@ const styles = StyleSheet.create({
     color: '#94A3B8',
     fontSize: 12,
   },
-}); 
+});

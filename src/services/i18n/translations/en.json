@@ -1,0 +1,605 @@
+{
+  "app": {
+    "name": "Compass Community",
+    "tagline": "Privacy-first community safety platform"
+  },
+  "onboarding": {
+    "welcome": {
+      "title": "Welcome to",
+      "appName": "Compass Community",
+      "subtitle": "Privacy-first community safety platform",
+      "mission": {
+        "title": "Our Mission",
+        "description": "Provide communities with a secure, anonymous platform to share time-sensitive safety information while protecting user privacy and maintaining legal compliance."
+      },
+      "features": {
+        "title": "Why Compass Community?",
+        "anonymous": {
+          "title": "Anonymous",
+          "description": "No accounts, profiles, or personal data collection"
+        },
+        "secure": {
+          "title": "Secure", 
+          "description": "Location anonymized and data auto-expires"
+        },
+        "community": {
+          "title": "Community",
+          "description": "Real-time safety alerts from your neighbors"
+        },
+        "temporary": {
+          "title": "Temporary",
+          "description": "All reports automatically deleted after 4 hours"
+        }
+      },
+      "promise": {
+        "title": "Our Promise",
+        "description": "Your safety and privacy are our top priorities. We collect",
+        "highlight": "zero personal information",
+        "description2": "and keep all data on your device. This app was built by and for communities who understand the importance of digital privacy."
+      },
+      "action": {
+        "title": "Ready to join your community safety network?",
+        "getStarted": "Get Started",
+        "skip": "Skip for now"
+      },
+      "progress": "Step 1 of 5"
+    },
+    "locationPermission": {
+      "title": "Location Services",
+      "subtitle": "Anonymous location sharing for community alerts",
+      "permissionDenied": "Location access is needed for community safety features. You can enable it later in Settings.",
+      "permissionError": "Failed to request location permission. You can enable it later in Settings.",
+      "why": {
+        "title": "Why Location Access?",
+        "communitySafety": {
+          "title": "Community Safety",
+          "description": "Receive alerts about safety concerns in your immediate area"
+        },
+        "relevantAlerts": {
+          "title": "Relevant Alerts", 
+          "description": "Only see reports within 8km of your current location"
+        },
+        "interactiveMap": {
+          "title": "Interactive Map",
+          "description": "View community reports on a map centered on your area"
+        }
+      },
+      "privacy": {
+        "title": "Your Privacy is Protected",
+        "anonymization": {
+          "title": "Location Anonymization:",
+          "description": "GPS coordinates are rounded to ~100m grid squares"
+        },
+        "localStorage": {
+          "title": "Local Storage:",
+          "description": "All data stays on your device - never sent to servers"
+        },
+        "autoDelete": {
+          "title": "Auto-Delete:",
+          "description": "Location data automatically expires after 4 hours"
+        },
+        "noTracking": {
+          "title": "No Tracking:",
+          "description": "We cannot identify or track individual users"
+        }
+      },
+      "technical": {
+        "title": "Technical Details",
+        "details": "• Location precision is intentionally reduced to protect privacy\n• Only general area (within 100m) is used for community matching\n• No location history is stored beyond current session\n• Background location access is never requested\n• You can disable location services at any time in Settings"
+      },
+      "actions": {
+        "enable": "Enable Location",
+        "continue": "Continue Without Location",
+        "limited": "(Limited functionality)",
+        "requesting": "Requesting..."
+      },
+      "progress": "Step 2 of 5"
+    },
+    "featureTour": {
+      "title": "App Features",
+      "map": {
+        "title": "Community Map",
+        "description": "Real-time safety information at your fingertips",
+        "features": {
+          "area": {
+            "title": "Your Area",
+            "description": "See alerts within 8km of your location"
+          },
+          "reports": {
+            "title": "Safety Reports", 
+            "description": "View different types of community reports"
+          },
+          "radius": {
+            "title": "Alert Radius",
+            "description": "Visual indicator of your coverage area"
+          },
+          "live": {
+            "title": "Live Updates",
+            "description": "Reports automatically expire after 4 hours"
+          }
+        },
+        "tip": "Tap on any report marker to see details and verify if you're nearby. The map automatically centers on your location when opened."
+      },
+      "reporting": {
+        "title": "Report Activity",
+        "description": "Help keep your community informed and safe",
+        "features": {
+          "quick": {
+            "title": "Quick Reporting",
+            "description": "Submit safety reports in seconds"
+          },
+          "types": {
+            "title": "Report Types",
+            "description": "Checkpoints, raids, patrols, and more"
+          },
+          "photo": {
+            "title": "Photo Evidence",
+            "description": "Optional photo attachment with privacy warnings"
+          },
+          "anonymous": {
+            "title": "Anonymous",
+            "description": "All reports are completely anonymous"
+          }
+        },
+        "tip": "Access the report screen from the main menu or use the floating action button. Include as much detail as safely possible."
+      },
+      "verification": {
+        "title": "Community Verification",
+        "description": "Help validate reports and build trust",
+        "features": {
+          "trust": {
+            "title": "Community Trust",
+            "description": "Verify reports from other community members"
+          },
+          "credibility": {
+            "title": "Credibility",
+            "description": "Build reputation through accurate reporting"
+          },
+          "priority": {
+            "title": "Priority Levels",
+            "description": "High-priority reports get wider coverage"
+          },
+          "quick": {
+            "title": "Quick Action",
+            "description": "Verify reports with a simple tap"
+          }
+        },
+        "tip": "Only verify reports you can personally confirm. Your verification helps the community assess report accuracy."
+      },
+      "tips": {
+        "title": "Quick Tip"
+      },
+      "next": "Next",
+      "continue": "Continue",
+      "progress": "Step 3 of 5"
+    },
+    "privacy": {
+      "title": "Privacy First",
+      "subtitle": "Your Privacy Matters",
+      "description": "Built with the highest privacy standards for vulnerable communities",
+      "principles": {
+        "title": "Our Privacy Principles",
+        "zeroData": {
+          "title": "Zero Data Collection",
+          "description": "We collect absolutely zero personal information. No names, emails, phone numbers, or user accounts."
+        },
+        "localFirst": {
+          "title": "Local-First Storage",
+          "description": "All your data stays on your device. Reports and settings never leave your phone."
+        },
+        "anonymization": {
+          "title": "Location Anonymization", 
+          "description": "Your precise location is never stored. We use 100m grid squares to protect your privacy."
+        },
+        "autoDelete": {
+          "title": "Automatic Deletion",
+          "description": "All reports automatically expire and delete after 4 hours. Nothing is permanent."
+        }
+      },
+      "safeguards": {
+        "title": "Technical Safeguards",
+        "encryption": {
+          "title": "Encrypted Storage:",
+          "description": "All local data is encrypted using industry-standard algorithms"
+        },
+        "analytics": {
+          "title": "No Analytics:",
+          "description": "Zero tracking pixels, crash reports, or usage analytics"
+        },
+        "openSource": {
+          "title": "Open Source:",
+          "description": "Code is publicly auditable for transparency"
+        },
+        "thirdParties": {
+          "title": "No Third Parties:",
+          "description": "No external services, ads, or data brokers"
+        }
+      },
+      "legal": {
+        "title": "Legal Protection",
+        "description": "This app was designed specifically for immigrant and vulnerable communities who may face legal risks. By design, we cannot provide user data to law enforcement or government agencies because we do not collect it in the first place.",
+        "highlight": "we do not collect it in the first place",
+        "subtitle": "Your safety and legal protection were our top priorities during development."
+      },
+      "dataUsage": {
+        "title": "What Data We Actually Use",
+        "locationGrid": {
+          "title": "Anonymized Location Grid",
+          "description": "~100m grid squares for community matching (e.g., \"Grid 42A\" instead of precise coordinates)"
+        },
+        "reportContent": {
+          "title": "Report Content",
+          "description": "Safety information you choose to share with the community (stored locally only)"
+        },
+        "preferences": {
+          "title": "App Preferences",
+          "description": "Settings and preferences to improve your experience (stored locally only)"
+        }
+      },
+      "actions": {
+        "understand": "I Understand",
+        "policy": "Read Privacy Policy"
+      },
+      "actionText": "Ready to experience privacy-first community safety?",
+      "progress": "Step 4 of 5"
+    },
+    "complete": {
+      "title": "All Set!",
+      "subtitle": "Your Compass Community app is ready to use",
+      "welcomeTitle": "Welcome to Compass Community!",
+      "welcomeMessage": "You're all set to start using the app. Explore the map, submit reports, and help keep your community safe.",
+      "welcomeAction": "Let's Go!",
+      "allSet": "All Set!",
+      "appReady": "Your Compass Community app is ready to use",
+      "setupComplete": "Setup Complete",
+      "privacyConfigured": "Privacy settings configured",
+      "communityFeaturesActivated": "Community features activated",
+      "safetyProtocolsEnabled": "Safety protocols enabled",
+      "anonymousReportingReady": "Anonymous reporting ready",
+      "whatsNext": "What's Next?",
+      "exploreMap": "Explore the Map",
+      "checkReports": "Check out community reports in your area",
+      "submitFirstReport": "Submit Your First Report",
+      "shareSafetyInfo": "Help your community by sharing safety information",
+      "verifyReports": "Verify Community Reports",
+      "buildTrust": "Build trust by confirming reports you can verify",
+      "quickTips": "Quick Tips",
+      "reportsExpire": "• Reports automatically expire after 4 hours",
+      "anonymizedLocation": "• Your location is always anonymized to protect privacy",
+      "useVerification": "• Use the verification system to build community trust",
+      "accessSettings": "• Access settings anytime to adjust preferences",
+      "needHelp": "Need Help?",
+      "visitSettings": "Visit the Settings screen for tutorials, privacy information, and community guidelines.",
+      "startUsingApp": "Start Using App",
+      "summary": {
+        "title": "Setup Complete",
+        "privacy": "Privacy settings configured",
+        "features": "Community features activated",
+        "protocols": "Safety protocols enabled",
+        "reporting": "Anonymous reporting ready"
+      },
+      "nextSteps": {
+        "title": "What's Next?",
+        "step1": {
+          "title": "Explore the Map",
+          "description": "Check out community reports in your area"
+        },
+        "step2": {
+          "title": "Submit Your First Report",
+          "description": "Help your community by sharing safety information"
+        },
+        "step3": {
+          "title": "Verify Community Reports",
+          "description": "Build trust by confirming reports you can verify"
+        }
+      },
+      "tips": {
+        "title": "Quick Tips",
+        "tip1": "• Reports automatically expire after 4 hours",
+        "tip2": "• Your location is always anonymized to protect privacy",
+        "tip3": "• Use the verification system to build community trust",
+        "tip4": "• Access settings anytime to adjust preferences"
+      },
+      "support": {
+        "title": "Need Help?",
+        "description": "Visit the Settings screen for tutorials, privacy information, and community guidelines."
+      },
+      "action": "Start Using App",
+      "progress": "Setup Complete!"
+    },
+    "common": {
+      "skip": "Skip",
+      "back": "Back"
+    }
+  },
+  "home": {
+    "title": "Protected",
+    "subtitle": "Active community safety monitoring",
+    "status": {
+      "protected": "Protected",
+      "anonymous": "Anonymous location • 0 active reports • Push notifications enabled",
+      "membership": "New Member",
+      "verifications": "0 verifications sent",
+      "locationDisabled": "Location access disabled",
+      "enableLocation": "Enable location for community features and safety alerts",
+      "enable": "Enable Location",
+      "setupRequired": "Setup Required",
+      "initializing": "Initializing location services...",
+      "active": "✓ Active community safety monitoring",
+      "anonymized": "Anonymized location",
+      "activeReports": "{{count}} active reports",
+      "pushEnabled": "• Push notifications enabled",
+      "enableButton": "Enable Location"
+    },
+    "map": {
+      "title": "Community Map",
+      "subtitle": "Shows anonymized alerts within {{radius}}km radius",
+      "placeholder": "Interactive Community Map",
+      "placeholderDisabled": "Enable Location for Map"
+    },
+    "emergency": {
+      "title": "Emergency Tools",
+      "description": "Quick access to emergency features and safety tools when you need them most.",
+      "panicButton": {
+        "title": "Emergency Alert",
+        "comingSoon": "Coming Soon - Instant emergency notifications"
+      },
+      "note": "For immediate emergencies, always call local emergency services (911)."
+    },
+    "quickActions": {
+      "report": "Report Activity"
+    }
+  },
+  "report": {
+    "title": "Report Activity",
+    "subtitle": "Help keep your community safe",
+    "type": {
+      "title": "Activity Type",
+      "subtitle": "What type of activity are you reporting?",
+      "checkpoint": "Checkpoint/Roadblock",
+      "raid": "Raid/Search",
+      "patrol": "Patrol Activity",
+      "arrest": "Arrest/Detention",
+      "harassment": "Harassment/Intimidation",
+      "other": "Other Safety Concern"
+    },
+    "urgency": {
+      "title": "Urgency Level",
+      "subtitle": "How urgent is this situation?",
+      "low": "Low",
+      "medium": "Medium", 
+      "high": "High",
+      "critical": "Critical"
+    },
+    "description": {
+      "title": "Description (Optional)",
+      "subtitle": "Add any relevant details that might help the community",
+      "placeholder": "e.g., vehicle descriptions, uniforms, specific location details...",
+      "characterCount": "{{count}}/200 characters"
+    },
+    "photo": {
+      "title": "Photo Evidence (Optional)",
+      "subtitle": "Visual evidence can help the community assess the situation",
+      "warning": "⚠️ Warning: Photos may contain identifying information",
+      "add": "Add Photo",
+      "change": "Change Photo",
+      "remove": "Remove Photo"
+    },
+    "location": {
+      "title": "Location Confirmation",
+      "subtitle": "Confirm this report is for your current location",
+      "anonymized": "Your location will be anonymized to a ~100m grid square",
+      "change": "Use Different Location"
+    },
+    "privacy": {
+      "title": "Privacy Notice",
+      "anonymous": "• All reports are completely anonymous",
+      "expires": "• Reports automatically expire after 4 hours", 
+      "encrypted": "• All data is encrypted and stored locally",
+      "noTracking": "• No personal information is collected or transmitted"
+    },
+    "actions": {
+      "submit": "Submit Report",
+      "submitting": "Submitting...",
+      "cancel": "Cancel"
+    },
+    "success": {
+      "title": "Report Submitted",
+      "message": "Thank you for helping keep the community safe. Your anonymous report has been shared with nearby community members.",
+      "reportId": "Report ID: {{id}}",
+      "viewMap": "View on Map",
+      "newReport": "Submit New Report",
+      "done": "Done"
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "tutorialInfo": "Tutorial is not yet implemented but will guide you through app features.",
+    "clearDataTitle": "Clear All Data",
+    "clearDataMessage": "This will permanently delete all reports, settings, and preferences from this device. This action cannot be undone.",
+    "clearDataConfirm": "Clear Data",
+    "dataCleared": "All data has been cleared successfully.",
+    "resetOnboardingMessage": "This will reset the app onboarding flow so you can see the welcome screens again.",
+    "resetOnboardingConfirm": "Reset",
+    "onboardingReset": "Onboarding has been reset. Close and reopen the app to see the tutorial again.",
+    "language": {
+      "title": "Language / Idioma",
+      "subtitle": "Choose your preferred language",
+      "english": "English",
+      "spanish": "Español"
+    },
+    "privacy": {
+      "title": "Privacy Settings",
+      "location": "Location Services",
+      "locationSubtitle": "Enable location for community features",
+      "notifications": "Push Notifications", 
+      "notificationsSubtitle": "Receive safety alerts in your area",
+      "dataStorage": "Local Data Storage",
+      "dataStorageSubtitle": "Manage locally stored reports and settings"
+    },
+    "community": {
+      "title": "Community Settings",
+      "verification": "Report Verification",
+      "verificationSubtitle": "Help verify community reports",
+      "alertRadius": "Alert Radius",
+      "alertRadiusSubtitle": "Distance for receiving safety alerts"
+    },
+    "legal": {
+      "title": "Legal & Privacy",
+      "privacyPolicy": "Privacy Policy",
+      "termsOfService": "Terms of Service",
+      "openSource": "Open Source Licenses"
+    },
+    "support": {
+      "title": "Support & Info",
+      "tutorial": "App Tutorial",
+      "guidelines": "Community Guidelines",
+      "contact": "Contact Support",
+      "version": "Version {{version}}"
+    },
+    "developer": {
+      "title": "Developer Options",
+      "showOnboarding": "Show Onboarding",
+      "resetOnboarding": "Reset Onboarding",
+      "clearData": "Clear All Data"
+    },
+    "about": {
+      "title": "About Compass Community",
+      "description": "A privacy-first community safety app designed to help communities stay informed and protected. Built with love for community safety and digital rights.",
+      "version": "Version {{version}} (Development Build)"
+    }
+  },
+  "legal": {
+    "privacyPolicy": {
+      "title": "Privacy Policy",
+      "dataCollection": {
+        "title": "Data Collection",
+        "none": "We collect NO personal information whatsoever:",
+        "noNames": "• No names, emails, or contact information",
+        "noAccounts": "• No user accounts or profiles", 
+        "noTracking": "• No tracking or behavioral analysis",
+        "noIdentifiers": "• No device identifiers or fingerprinting"
+      },
+      "locationData": {
+        "title": "Location Data",
+        "anonymized": "Location information is anonymized:",
+        "gridSquares": "• Converted to ~100m grid squares",
+        "noHistory": "• No location history stored",
+        "autoExpire": "• All location data expires after 4 hours",
+        "noTransmission": "• Never transmitted to external servers"
+      },
+      "dataStorage": {
+        "title": "Data Storage",
+        "local": "All data stored locally on your device:",
+        "encrypted": "• Industry-standard encryption",
+        "noServers": "• No data transmitted to external servers",
+        "autoPurge": "• Automatic data purging",
+        "deviceOnly": "• All data stored locally on your device"
+      },
+      "controls": {
+        "title": "Your Controls",
+        "disable": "• Disable location services anytime",
+        "clear": "• Clear all local data",
+        "notifications": "• Control all notification types",
+        "uninstall": "• Uninstall removes all data"
+      },
+      "summary": "Summary: We protect your privacy by not collecting your personal information in the first place."
+    },
+    "termsOfService": {
+      "title": "Terms of Service",
+      "mission": {
+        "title": "Community Safety Mission",
+        "description": "Compass Community enhances community safety through anonymous, privacy-respecting information sharing."
+      },
+      "permitted": {
+        "title": "Permitted Uses",
+        "report": "• Report legitimate community safety concerns",
+        "receive": "• Receive location-based safety alerts",
+        "verify": "• Verify reports you have personally witnessed",
+        "access": "• Access community safety information"
+      },
+      "prohibited": {
+        "title": "Prohibited Uses",
+        "false": "• Submit false or misleading reports",
+        "identify": "• Attempt to identify or track other users",
+        "commercial": "• Use for commercial purposes",
+        "harass": "• Submit harassing or discriminatory content",
+        "illegal": "• Use for illegal purposes"
+      },
+      "guidelines": {
+        "title": "Reporting Guidelines",
+        "goodFaith": "Good Faith: Reports must be based on actual observations",
+        "safety": "Safety Focus: Content should relate to legitimate safety concerns",
+        "respectful": "Respectful: Maintain respectful communication"
+      },
+      "emergency": {
+        "title": "⚠ Emergency Notice",
+        "description": "This app is NOT an emergency service. For immediate emergencies, always call local emergency services (911 in US)."
+      },
+      "standards": {
+        "title": "Community Standards",
+        "benefit": "• Participate for community benefit",
+        "verify": "• Verify only reports you can reasonably confirm",
+        "respect": "• Respect others' privacy and safety",
+        "laws": "• Follow all applicable laws"
+      },
+      "agreement": "By using Compass Community, you agree to these terms and our privacy-first approach."
+    }
+  },
+  "activity": {
+    "title": "Community Activity",
+    "filters": {
+      "all": "All Reports",
+      "verified": "Verified Only",
+      "recent": "Last 24 Hours",
+      "nearby": "Nearby Only"
+    },
+    "noActivity": "No community activity in your area",
+    "loadMore": "Load More",
+    "refreshing": "Refreshing..."
+  },
+  "verification": {
+    "title": "Verify Report",
+    "question": "Can you confirm this report?",
+    "options": {
+      "yes": "Yes, I can confirm",
+      "no": "No, seems inaccurate", 
+      "unsure": "Unsure/Can't confirm"
+    },
+    "proximity": {
+      "title": "How close are you?",
+      "veryClose": "Very close (< 100m)",
+      "close": "Close (< 500m)",
+      "nearby": "Nearby (< 1km)",
+      "distant": "Distant (> 1km)"
+    },
+    "confidence": {
+      "title": "Confidence Level",
+      "high": "High - I saw it directly",
+      "medium": "Medium - Reliable indirect info",
+      "low": "Low - Uncertain"
+    },
+    "submit": "Submit Verification",
+    "thanks": "Thank you for helping the community!"
+  },
+  "errors": {
+    "general": "An error occurred",
+    "network": "Network connection error",
+    "location": "Location access error",
+    "permission": "Permission denied",
+    "retry": "Try Again",
+    "reload": "Restart App"
+  },
+  "common": {
+    "ok": "OK",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "warning": "Warning",
+    "info": "Information"
+  }
+} 

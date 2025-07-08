@@ -17,6 +17,22 @@ Provide communities with a secure, anonymous platform to share time-sensitive sa
 - **No Tracking**: Zero user tracking, analytics, or behavioral data collection
 - **Secure API Keys**: Environment variables protect sensitive configurations
 
+### 🌐 Multi-Language Support
+
+- **Bilingual Interface**: Full Spanish and English language support
+- **Dynamic Language Detection**: Automatically detects device language on first launch
+- **Seamless Language Switching**: Change language anytime from settings
+- **Localized Content**: All UI text, onboarding, and notifications translated
+- **Cultural Adaptation**: Language-appropriate messaging and terminology
+
+### 📱 User Experience & Onboarding
+
+- **Comprehensive Onboarding**: Step-by-step privacy and feature explanation
+- **Interactive Tutorial**: Learn app features with hands-on guidance
+- **Privacy Education**: Clear explanation of data protection measures
+- **Accessibility-First**: Dark theme, large touch targets, clear navigation
+- **Intuitive Design**: Clean, modern interface designed for all technical skill levels
+
 ### 📍 Community Safety Features
 
 - **Interactive Map**: Real-time community reports displayed with Google Maps integration
@@ -25,6 +41,7 @@ Provide communities with a secure, anonymous platform to share time-sensitive sa
 - **Photo Evidence**: Optional photo attachment with privacy warnings
 - **Rate Limiting**: Prevents spam with 5-minute cooldowns and daily limits
 - **Priority Levels**: Low, medium, and high urgency reporting
+- **Emergency Tools**: Placeholder for panic button and emergency features (coming soon)
 
 ### 🛠️ Technical Highlights
 
@@ -149,22 +166,30 @@ npx eas build --platform all --profile production
 CompassCommunityApp/
 ├── app/                    # Expo Router pages
 │   ├── _layout.tsx        # Root layout and navigation
-│   ├── index.tsx          # Home screen with map and status
+│   ├── index.tsx          # Home screen with map and emergency tools placeholder
 │   ├── report.tsx         # Anonymous report submission with photos
-│   └── settings.tsx       # Privacy controls and preferences
+│   ├── settings.tsx       # Privacy controls and preferences with language settings
+│   └── legal.tsx          # Privacy policy and terms of service
 ├── src/
 │   ├── components/        # Reusable UI components
 │   │   ├── Map/          # Map components (web/native platform aware)
 │   │   ├── Report/       # Report form components
-│   │   └── UI/           # Generic UI elements
+│   │   ├── Onboarding/   # Complete onboarding flow (welcome, privacy, features)
+│   │   ├── Privacy/      # Privacy-related UI components
+│   │   └── UI/           # Generic UI elements and design system
 │   ├── services/         # Core business logic
 │   │   ├── Location/     # Location and geofencing services
 │   │   ├── Report/       # Report management and storage
 │   │   ├── Notification/ # Alert and notification management
-│   │   └── Storage/      # Data persistence and cleanup
+│   │   ├── Storage/      # Data persistence and cleanup
+│   │   ├── Onboarding/   # Onboarding state management
+│   │   ├── Verification/ # Community report verification system
+│   │   └── i18n/         # Internationalization service and translations
 │   ├── hooks/            # Custom React hooks
 │   │   ├── useLocation.js # Location state management
-│   │   └── useReports.js  # Report state management
+│   │   ├── useReports.ts  # Report state management
+│   │   ├── useTranslation.tsx # Translation and language switching
+│   │   └── useVerification.ts # Community verification features
 │   ├── utils/            # Helper functions
 │   ├── constants/        # App configuration
 │   └── types/            # TypeScript type definitions
