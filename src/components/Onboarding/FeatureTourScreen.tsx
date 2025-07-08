@@ -2,6 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
 import { Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTranslation } from '../../hooks/useTranslation';
 
 const { width } = Dimensions.get('window');
 
@@ -11,111 +12,114 @@ interface FeatureTourScreenProps {
   onBack: () => void;
 }
 
+interface FeatureItem {
+  icon: string;
+  title: string;
+  description: string;
+}
+
 interface FeatureSlide {
   id: string;
   title: string;
   description: string;
   icon: string;
   color: string;
-  features: {
-    icon: string;
-    title: string;
-    description: string;
-  }[];
+  features: FeatureItem[];
 }
 
-const featureSlides: FeatureSlide[] = [
-  {
-    id: 'map',
-    title: 'Community Map',
-    description: 'Real-time safety information at your fingertips',
-    icon: 'map',
-    color: '#8B5CF6',
-    features: [
-      {
-        icon: 'location',
-        title: 'Your Area',
-        description: 'See alerts within 8km of your location'
-      },
-      {
-        icon: 'alert-circle',
-        title: 'Safety Reports',
-        description: 'View different types of community reports'
-      },
-      {
-        icon: 'radio-button-on',
-        title: 'Alert Radius',
-        description: 'Visual indicator of your coverage area'
-      },
-      {
-        icon: 'time',
-        title: 'Live Updates',
-        description: 'Reports automatically expire after 4 hours'
-      }
-    ]
-  },
-  {
-    id: 'reporting',
-    title: 'Report Activity',
-    description: 'Help keep your community informed and safe',
-    icon: 'document-text',
-    color: '#06B6D4',
-    features: [
-      {
-        icon: 'add-circle',
-        title: 'Quick Reporting',
-        description: 'Submit safety reports in seconds'
-      },
-      {
-        icon: 'list',
-        title: 'Report Types',
-        description: 'Checkpoints, raids, patrols, and more'
-      },
-      {
-        icon: 'camera',
-        title: 'Photo Evidence',
-        description: 'Optional photo attachment with privacy warnings'
-      },
-      {
-        icon: 'shield-checkmark',
-        title: 'Anonymous',
-        description: 'All reports are completely anonymous'
-      }
-    ]
-  },
-  {
-    id: 'verification',
-    title: 'Community Verification',
-    description: 'Help validate reports and build trust',
-    icon: 'checkmark-circle',
-    color: '#10B981',
-    features: [
-      {
-        icon: 'people',
-        title: 'Community Trust',
-        description: 'Verify reports from other community members'
-      },
-      {
-        icon: 'star',
-        title: 'Credibility',
-        description: 'Build reputation through accurate reporting'
-      },
-      {
-        icon: 'trending-up',
-        title: 'Priority Levels',
-        description: 'High-priority reports get wider coverage'
-      },
-      {
-        icon: 'timer',
-        title: 'Quick Action',
-        description: 'Verify reports with a simple tap'
-      }
-    ]
-  }
-];
-
 export function FeatureTourScreen({ onNext, onSkip, onBack }: FeatureTourScreenProps) {
+  const { t } = useTranslation();
   const [currentSlide, setCurrentSlide] = useState(0);
+
+  const featureSlides: FeatureSlide[] = [
+    {
+      id: 'map',
+      title: t('onboarding.featureTour.map.title'),
+      description: t('onboarding.featureTour.map.description'),
+      icon: 'map',
+      color: '#8B5CF6',
+      features: [
+        {
+          icon: 'location',
+          title: t('onboarding.featureTour.map.features.area.title'),
+          description: t('onboarding.featureTour.map.features.area.description')
+        },
+        {
+          icon: 'alert-circle',
+          title: t('onboarding.featureTour.map.features.reports.title'),
+          description: t('onboarding.featureTour.map.features.reports.description')
+        },
+        {
+          icon: 'radio-button-on',
+          title: t('onboarding.featureTour.map.features.radius.title'),
+          description: t('onboarding.featureTour.map.features.radius.description')
+        },
+        {
+          icon: 'time',
+          title: t('onboarding.featureTour.map.features.live.title'),
+          description: t('onboarding.featureTour.map.features.live.description')
+        }
+      ]
+    },
+    {
+      id: 'reporting',
+      title: t('onboarding.featureTour.reporting.title'),
+      description: t('onboarding.featureTour.reporting.description'),
+      icon: 'document-text',
+      color: '#06B6D4',
+      features: [
+        {
+          icon: 'add-circle',
+          title: t('onboarding.featureTour.reporting.features.quick.title'),
+          description: t('onboarding.featureTour.reporting.features.quick.description')
+        },
+        {
+          icon: 'list',
+          title: t('onboarding.featureTour.reporting.features.types.title'),
+          description: t('onboarding.featureTour.reporting.features.types.description')
+        },
+        {
+          icon: 'camera',
+          title: t('onboarding.featureTour.reporting.features.photo.title'),
+          description: t('onboarding.featureTour.reporting.features.photo.description')
+        },
+        {
+          icon: 'shield-checkmark',
+          title: t('onboarding.featureTour.reporting.features.anonymous.title'),
+          description: t('onboarding.featureTour.reporting.features.anonymous.description')
+        }
+      ]
+    },
+    {
+      id: 'verification',
+      title: t('onboarding.featureTour.verification.title'),
+      description: t('onboarding.featureTour.verification.description'),
+      icon: 'checkmark-circle',
+      color: '#10B981',
+      features: [
+        {
+          icon: 'people',
+          title: t('onboarding.featureTour.verification.features.trust.title'),
+          description: t('onboarding.featureTour.verification.features.trust.description')
+        },
+        {
+          icon: 'star',
+          title: t('onboarding.featureTour.verification.features.credibility.title'),
+          description: t('onboarding.featureTour.verification.features.credibility.description')
+        },
+        {
+          icon: 'trending-up',
+          title: t('onboarding.featureTour.verification.features.priority.title'),
+          description: t('onboarding.featureTour.verification.features.priority.description')
+        },
+        {
+          icon: 'timer',
+          title: t('onboarding.featureTour.verification.features.quick.title'),
+          description: t('onboarding.featureTour.verification.features.quick.description')
+        }
+      ]
+    }
+  ];
 
   const nextSlide = () => {
     if (currentSlide < featureSlides.length - 1) {
@@ -141,9 +145,9 @@ export function FeatureTourScreen({ onNext, onSkip, onBack }: FeatureTourScreenP
           <TouchableOpacity style={styles.backButton} onPress={onBack}>
             <Ionicons name="arrow-back" size={24} color="#6B7280" />
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>App Features</Text>
+          <Text style={styles.headerTitle}>{t('onboarding.featureTour.title')}</Text>
           <TouchableOpacity style={styles.skipButton} onPress={onSkip}>
-            <Text style={styles.skipButtonText}>Skip</Text>
+            <Text style={styles.skipButtonText}>{t('onboarding.common.skip')}</Text>
           </TouchableOpacity>
         </View>
 
@@ -195,64 +199,57 @@ export function FeatureTourScreen({ onNext, onSkip, onBack }: FeatureTourScreenP
             <View style={styles.tipsCard}>
               <View style={styles.tipsHeader}>
                 <Ionicons name="bulb" size={20} color="#F59E0B" />
-                <Text style={styles.tipsTitle}>Quick Tip</Text>
+                <Text style={styles.tipsTitle}>{t('onboarding.featureTour.tips.title')}</Text>
               </View>
               
               {currentSlide === 0 && (
                 <Text style={styles.tipsText}>
-                  Tap on any report marker to see details and verify if you&apos;re nearby. The map automatically centers on your location when opened.
+                  {t('onboarding.featureTour.map.tip')}
                 </Text>
               )}
               
               {currentSlide === 1 && (
                 <Text style={styles.tipsText}>
-                  Access the report screen from the main menu or use the floating action button. Include as much detail as safely possible.
+                  {t('onboarding.featureTour.reporting.tip')}
                 </Text>
               )}
               
               {currentSlide === 2 && (
                 <Text style={styles.tipsText}>
-                  Only verify reports you can personally confirm. Your verification helps the community assess report accuracy.
+                  {t('onboarding.featureTour.verification.tip')}
                 </Text>
               )}
             </View>
           </View>
-
-          {/* Navigation */}
-          <View style={styles.navigationSection}>
-            <View style={styles.navigationButtons}>
-              {currentSlide > 0 && (
-                <TouchableOpacity style={styles.prevButton} onPress={prevSlide}>
-                  <Ionicons name="chevron-back" size={20} color="#6B7280" />
-                  <Text style={styles.prevButtonText}>Previous</Text>
-                </TouchableOpacity>
-              )}
-              
-              <View style={{ flex: 1 }} />
-              
-              <TouchableOpacity style={styles.nextButton} onPress={nextSlide}>
-                <View style={[styles.nextButtonGradient, { backgroundColor: current.color }]}>
-                  <Text style={styles.nextButtonText}>
-                    {currentSlide === featureSlides.length - 1 ? 'Continue' : 'Next'}
-                  </Text>
-                  <Ionicons name="chevron-forward" size={20} color="#ffffff" />
-                </View>
-              </TouchableOpacity>
-            </View>
-          </View>
-
-          {/* Progress Indicator */}
-          <View style={styles.progressSection}>
-            <View style={styles.progressDots}>
-              <View style={[styles.dot, styles.completedDot]} />
-              <View style={[styles.dot, styles.completedDot]} />
-              <View style={[styles.dot, styles.activeDot]} />
-              <View style={styles.dot} />
-              <View style={styles.dot} />
-            </View>
-            <Text style={styles.progressText}>Step 3 of 5</Text>
-          </View>
         </ScrollView>
+
+        {/* Navigation */}
+        <View style={styles.navigation}>
+          <View style={styles.progressSection}>
+            <Text style={styles.progressText}>{t('onboarding.featureTour.progress')}</Text>
+            <View style={styles.progressBar}>
+              <View style={[styles.progressFill, { width: `${((currentSlide + 1) / 3) * 100}%`, backgroundColor: current.color }]} />
+            </View>
+          </View>
+
+          <View style={styles.navButtons}>
+            {currentSlide > 0 && (
+              <TouchableOpacity style={styles.navButton} onPress={prevSlide}>
+                <Ionicons name="chevron-back" size={24} color="#6B7280" />
+                <Text style={styles.navButtonText}>{t('onboarding.common.back')}</Text>
+              </TouchableOpacity>
+            )}
+            
+            <View style={styles.navSpacer} />
+            
+            <TouchableOpacity style={[styles.nextButton, { backgroundColor: current.color }]} onPress={nextSlide}>
+              <Text style={styles.nextButtonText}>
+                {currentSlide < featureSlides.length - 1 ? t('onboarding.featureTour.next') : t('onboarding.featureTour.continue')}
+              </Text>
+              <Ionicons name="chevron-forward" size={24} color="#ffffff" />
+            </TouchableOpacity>
+          </View>
+        </View>
       </View>
     </SafeAreaView>
   );
@@ -411,14 +408,35 @@ const styles = StyleSheet.create({
     color: '#D1D5DB',
     lineHeight: 20,
   },
-  navigationSection: {
-    marginBottom: 32,
+  navigation: {
+    paddingHorizontal: 24,
+    paddingBottom: 24,
   },
-  navigationButtons: {
+  progressSection: {
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  progressText: {
+    fontSize: 12,
+    color: '#6B7280',
+    marginBottom: 8,
+  },
+  progressBar: {
+    width: '100%',
+    height: 8,
+    backgroundColor: 'rgba(107, 114, 128, 0.3)',
+    borderRadius: 4,
+  },
+  progressFill: {
+    height: '100%',
+    borderRadius: 4,
+  },
+  navButtons: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
   },
-  prevButton: {
+  navButton: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 12,
@@ -426,53 +444,26 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(107, 114, 128, 0.1)',
     borderRadius: 8,
   },
-  prevButtonText: {
+  navButtonText: {
     fontSize: 14,
     color: '#6B7280',
     marginLeft: 4,
     fontWeight: '500',
   },
-  nextButton: {
-    borderRadius: 8,
-    overflow: 'hidden',
+  navSpacer: {
+    width: 16,
   },
-  nextButtonGradient: {
+  nextButton: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 12,
     paddingHorizontal: 20,
+    borderRadius: 8,
   },
   nextButtonText: {
     fontSize: 14,
     fontWeight: 'bold',
     color: '#ffffff',
     marginRight: 4,
-  },
-  progressSection: {
-    alignItems: 'center',
-    marginTop: 20,
-  },
-  progressDots: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  dot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: 'rgba(107, 114, 128, 0.3)',
-    marginHorizontal: 4,
-  },
-  activeDot: {
-    backgroundColor: '#8B5CF6',
-    width: 24,
-  },
-  completedDot: {
-    backgroundColor: '#10B981',
-  },
-  progressText: {
-    fontSize: 12,
-    color: '#6B7280',
   },
 }); 

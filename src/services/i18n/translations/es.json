@@ -166,12 +166,11 @@
         },
         "tip": "Solo verifica reportes que puedas confirmar personalmente. Tu verificación ayuda a la comunidad a evaluar la precisión del reporte."
       },
-      "navigation": {
-        "previous": "Anterior",
-        "next": "Siguiente",
-        "continue": "Continuar"
+      "tips": {
+        "title": "Consejo Rápido"
       },
-      "quickTip": "Consejo Rápido",
+      "next": "Siguiente",
+      "continue": "Continuar",
       "progress": "Paso 3 de 5"
     },
     "privacy": {
@@ -247,6 +246,31 @@
     "complete": {
       "title": "¡Todo Listo!",
       "subtitle": "Tu aplicación Compass Community está lista para usar",
+      "welcomeTitle": "¡Bienvenido a Compass Community!",
+      "welcomeMessage": "Estás listo para comenzar a usar la app. Explora el mapa, envía reportes y ayuda a mantener tu comunidad segura.",
+      "welcomeAction": "¡Vamos!",
+      "allSet": "¡Todo Listo!",
+      "appReady": "Tu aplicación Compass Community está lista para usar",
+      "setupComplete": "Configuración Completa",
+      "privacyConfigured": "Configuraciones de privacidad configuradas",
+      "communityFeaturesActivated": "Características comunitarias activadas",
+      "safetyProtocolsEnabled": "Protocolos de seguridad habilitados",
+      "anonymousReportingReady": "Reportes anónimos listos",
+      "whatsNext": "¿Qué Sigue?",
+      "exploreMap": "Explora el Mapa",
+      "checkReports": "Revisa los reportes comunitarios en tu área",
+      "submitFirstReport": "Envía Tu Primer Reporte",
+      "shareSafetyInfo": "Ayuda a tu comunidad compartiendo información de seguridad",
+      "verifyReports": "Verifica Reportes Comunitarios",
+      "buildTrust": "Construye confianza confirmando reportes que puedas verificar",
+      "quickTips": "Consejos Rápidos",
+      "reportsExpire": "• Los reportes expiran automáticamente después de 4 horas",
+      "anonymizedLocation": "• Tu ubicación siempre es anonimizada para proteger la privacidad",
+      "useVerification": "• Usa el sistema de verificación para construir confianza comunitaria",
+      "accessSettings": "• Accede a configuraciones en cualquier momento para ajustar preferencias",
+      "needHelp": "¿Necesitas Ayuda?",
+      "visitSettings": "Visita la pantalla de Configuraciones para tutoriales, información de privacidad y pautas comunitarias.",
+      "startUsingApp": "Comenzar a Usar la App",
       "summary": {
         "title": "Configuración Completa",
         "privacy": "Configuraciones de privacidad configuradas",
@@ -289,16 +313,41 @@
     }
   },
   "home": {
+    "title": "Protegido",
+    "subtitle": "Monitoreo de seguridad comunitaria activo",
     "status": {
       "protected": "Protegido",
+      "anonymous": "Ubicación anónima • 0 reportes activos • Notificaciones push habilitadas",
+      "membership": "Nuevo Miembro",
+      "verifications": "0 verificaciones enviadas",
+      "locationDisabled": "Acceso a ubicación deshabilitado",
+      "enableLocation": "Habilita la ubicación para características comunitarias y alertas de seguridad",
+      "enable": "Habilitar Ubicación",
       "setupRequired": "Configuración Requerida",
       "initializing": "Inicializando servicios de ubicación...",
       "active": "✓ Monitoreo de seguridad comunitaria activo",
-      "enable": "⚠ Activa la ubicación para unirte a la red",
-      "enableButton": "Activar Ubicación",
       "anonymized": "Ubicación anonimizada",
       "activeReports": "{{count}} reportes activos",
-      "pushEnabled": "• Notificaciones push habilitadas"
+      "pushEnabled": "• Notificaciones push habilitadas",
+      "enableButton": "Activar Ubicación"
+    },
+    "map": {
+      "title": "Mapa Comunitario",
+      "subtitle": "Muestra alertas anonimizadas dentro de {{radius}}km de radio",
+      "placeholder": "Mapa Comunitario Interactivo",
+      "placeholderDisabled": "Habilita Ubicación para el Mapa"
+    },
+    "emergency": {
+      "title": "Herramientas de Emergencia",
+      "description": "Acceso rápido a características de emergencia y herramientas de seguridad cuando más las necesites.",
+      "panicButton": {
+        "title": "Alerta de Emergencia",
+        "comingSoon": "Próximamente - Notificaciones de emergencia instantáneas"
+      },
+      "note": "Para emergencias inmediatas, siempre llama a servicios de emergencia locales (911)."
+    },
+    "quickActions": {
+      "report": "Reportar Actividad"
     },
     "verification": {
       "trustLevel": {
@@ -315,12 +364,6 @@
       "loading": "Cargando mapa...",
       "noReports": "No hay reportes activos en tu área",
       "tapToVerify": "Toca reportes para verificar"
-    },
-    "quickActions": {
-      "title": "Acciones Rápidas",
-      "report": "Reportar Actividad",
-      "map": "Ver Mapa",
-      "settings": "Configuración"
     },
     "recentActivity": {
       "title": "Actividad Reciente",

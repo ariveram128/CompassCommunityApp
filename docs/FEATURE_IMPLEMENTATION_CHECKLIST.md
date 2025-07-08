@@ -16,6 +16,18 @@
 - **✅ Developer Tools**: Sample data generation, testing utilities
 - **✅ Privacy Architecture**: Location anonymization, auto-expiring data, rate limiting
 
+#### **✅ RECENTLY COMPLETED - Language & Onboarding (v0.1.1)**
+
+- **✅ Multi-Language Support**: Full Spanish and English internationalization
+- **✅ Dynamic Language Detection**: Automatic device language detection on Android/iOS
+- **✅ Language Switching**: Settings-based language preference with persistence
+- **✅ Comprehensive Onboarding**: 5-step guided introduction flow
+- **✅ Privacy Education**: In-depth privacy explanation during onboarding
+- **✅ Feature Tour**: Interactive walkthrough of app capabilities
+- **✅ Onboarding Translations**: Fully localized onboarding experience
+- **✅ UI Improvements**: Centered buttons, consistent navigation, polished design
+- **✅ Emergency Tools Placeholder**: Prepared space for panic button implementation
+
 #### **Technical Achievements:**
 
 - **✅ Environment Variable Security**: `.env.local` + EAS environment variables

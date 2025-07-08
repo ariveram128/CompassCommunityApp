@@ -10,6 +10,7 @@ import { CONFIG } from '../src/constants/config';
 import { useCustomAlert } from '../src/hooks/useCustomAlert';
 import { useLocation } from '../src/hooks/useLocation';
 import { useReports } from '../src/hooks/useReports';
+import { useTranslation } from '../src/hooks/useTranslation';
 import { useVerification } from '../src/hooks/useVerification';
 import { ErrorService } from '../src/services/Error/ErrorService';
 import { NotificationService } from '../src/services/Notification/NotificationService';
@@ -21,13 +22,23 @@ import { DevUtils } from '../src/utils/DevUtils';
 type AlertActionStyle = 'default' | 'destructive' | 'cancel' | 'primary';
 
 export default function HomeScreen() {
-  const { reports, loading, error, refreshReports, generateSampleData, clearAllData } = useReports();
-  const { location, permissions, requestPermissions, refreshLocation } = useLocation();
-  const { verificationStats, getTrustLevelInfo, clearAllData: clearVerificationData } = useVerification();
+  const { t, currentLanguage } = useTranslation(); // Add translation hook with currentLanguage for re-renders
+  const { location, loading, error, refreshLocation } = useLocation();
+  const { reports, loading: reportsLoading, refreshReports, generateSampleData } = useReports();
+  const { 
+    verificationStats, 
+    canVerifyReport, 
+    verifyReport,
+    getVerificationStrengthInfo,
+    getTrustLevelInfo,
+    loading: verificationLoading
+  } = useVerification();
   const { showAlert, AlertComponent } = useCustomAlert();
-  const [showMap, setShowMap] = useState(true);
+  
   const [servicesInitialized, setServicesInitialized] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const mapRef = useRef<any>(null);
+  const [showMap, setShowMap] = useState(true);
 
   // Add ref to track last location to prevent infinite updates
   const lastLocationRef = useRef<{latitude: number; longitude: number} | null>(null);
@@ -84,29 +95,31 @@ export default function HomeScreen() {
     if (!DevUtils.showDeveloperMenu) return;
     
     showAlert(
-      'Developer Tools',
-      'Choose an action for testing:',
+      'Developer Menu',
+      'Development tools and testing utilities',
       [
         { text: 'Cancel', style: 'cancel' as AlertActionStyle },
         { 
-          text: 'Generate Sample Reports', 
-          style: 'default' as AlertActionStyle,
-          onPress: () => location && generateSampleData(location)
-        },
-        {
-          text: 'Generate Sample Verifications',
+          text: 'Generate Sample Data', 
           style: 'default' as AlertActionStyle,
           onPress: () => location && generateSampleVerifications()
         },
         { 
           text: 'Clear Report Data', 
           style: 'destructive' as AlertActionStyle,
-          onPress: clearAllData
+          onPress: async () => {
+            const { ReportService } = await import('../src/services/Report/ReportService');
+            await ReportService.clearAllData();
+            await refreshReports();
+          }
         },
         {
           text: 'Clear Verification Data',
           style: 'destructive' as AlertActionStyle, 
-          onPress: () => clearVerificationData()
+          onPress: async () => {
+            const { VerificationService } = await import('../src/services/Verification/VerificationService');
+            await VerificationService.clearAllData();
+          }
         },
         { 
           text: 'Toggle Map', 
@@ -124,7 +137,12 @@ export default function HomeScreen() {
           onPress: () => showVerificationStats()
         },
         {
-          text: 'Show Onboarding',
+          text: 'Reset Language',
+          style: 'default' as AlertActionStyle,
+          onPress: () => resetLanguageToDevice()
+        },
+        {
+          text: 'Show Onboarding Now',
           style: 'primary' as AlertActionStyle,
           onPress: () => setShowOnboarding(true)
         },
@@ -138,12 +156,48 @@ export default function HomeScreen() {
     );
   };
 
+  const resetLanguageToDevice = async () => {
+    try {
+      const { storeLanguage, getDeviceLanguage, changeLanguage } = await import('../src/services/i18n/i18n');
+      const deviceLanguage = getDeviceLanguage();
+      await storeLanguage(deviceLanguage);
+      await changeLanguage(deviceLanguage);
+      
+      showAlert(
+        'Language Reset',
+        `Language reset to device setting: ${deviceLanguage === 'es' ? 'Español' : 'English'}`,
+        [{ text: 'OK', style: 'primary' as AlertActionStyle }],
+        { icon: 'language', iconColor: '#6366F1' }
+      );
+      DevUtils.log('Language reset to device setting:', deviceLanguage);
+    } catch (error) {
+      DevUtils.error('Failed to reset language:', error);
+      showAlert(
+        'Error',
+        'Failed to reset language.',
+        [{ text: 'OK', style: 'primary' as AlertActionStyle }],
+        { icon: 'alert-circle', iconColor: '#EF4444' }
+      );
+    }
+  };
+
   const resetOnboarding = async () => {
     try {
       await OnboardingService.resetOnboarding();
+      
+      // Also clear language preference to re-detect device language
+      const { storeLanguage, getDeviceLanguage, changeLanguage } = await import('../src/services/i18n/i18n');
+      const deviceLanguage = getDeviceLanguage();
+      await storeLanguage(deviceLanguage);
+      
+      // Change to detected language immediately
+      await changeLanguage(deviceLanguage);
+      
+      // Immediately show onboarding after reset
+      setShowOnboarding(true);
       showAlert(
         'Onboarding Reset',
-        'Onboarding has been reset. The app will show onboarding on next launch.',
+        'Onboarding has been reset and will show now.',
         [{ text: 'OK', style: 'primary' as AlertActionStyle }],
         { icon: 'refresh', iconColor: '#10B981' }
       );
@@ -165,9 +219,9 @@ export default function HomeScreen() {
     
     // Show welcome message
     showAlert(
-      'Welcome to Compass Community!',
-      'You\'re all set to start using the app. Explore the map, submit reports, and help keep your community safe.',
-      [{ text: 'Let\'s Go!', style: 'primary' as AlertActionStyle }],
+      t('onboarding.complete.welcomeTitle'),
+      t('onboarding.complete.welcomeMessage'),
+      [{ text: t('onboarding.complete.welcomeAction'), style: 'primary' as AlertActionStyle }],
       { icon: 'checkmark-circle', iconColor: '#10B981' }
     );
   };
@@ -373,20 +427,20 @@ export default function HomeScreen() {
               color={location ? "#10B981" : "#EF4444"} 
             />
             <Text style={styles.statusTitle}>
-              {location ? 'Protected' : 'Setup Required'}
+              {location ? t('home.status.protected') : t('home.status.setupRequired')}
             </Text>
           </View>
           
           {loading ? (
-            <Text style={styles.statusText}>Initializing location services...</Text>
+            <Text style={styles.statusText}>{t('home.status.initializing')}</Text>
           ) : location ? (
             <View>
               <Text style={[styles.statusText, { color: "#10B981" }]}>
-                ✓ Community safety monitoring active
+                {t('home.status.active')}
               </Text>
               <Text style={styles.statusSubtext}>
-                Anonymized location • {reports.length} active reports
-                {servicesInitialized && ' • Push notifications enabled'}
+                {t('home.status.anonymized')} • {t('home.status.activeReports', { count: reports.length })}
+                {servicesInitialized && t('home.status.pushEnabled')}
               </Text>
               {servicesInitialized && verificationStats && (
                 <View style={styles.verificationStatus}>
@@ -397,7 +451,7 @@ export default function HomeScreen() {
                     </Text>
                   </View>
                   <Text style={styles.verificationSubtext}>
-                    {verificationStats.verificationsSubmitted} verifications submitted
+                    {t('home.verification.submitted', { count: verificationStats.verificationsSubmitted })}
                   </Text>
                 </View>
               )}
@@ -405,13 +459,13 @@ export default function HomeScreen() {
           ) : (
             <View>
               <Text style={[styles.statusText, { color: "#EF4444" }]}>
-                ⚠ Enable location to join the network
+                {t('home.status.enable')}
               </Text>
               <TouchableOpacity 
                 style={styles.enableButton}
                 onPress={refreshLocation}
               >
-                <Text style={styles.enableButtonText}>Enable Location</Text>
+                <Text style={styles.enableButtonText}>{t('home.status.enableButton')}</Text>
               </TouchableOpacity>
             </View>
           )}
@@ -426,7 +480,7 @@ export default function HomeScreen() {
         {/* Community Map */}
         {showMap && location ? (
           <View style={styles.mapContainer}>
-            <Text style={styles.sectionTitle}>Community Map</Text>
+            <Text style={styles.sectionTitle}>{t('home.map.title')}</Text>
             <View style={styles.mapWrapper}>
               <CommunityMap
                 userLocation={location}
@@ -441,39 +495,45 @@ export default function HomeScreen() {
         <View style={styles.mapPlaceholder}>
             <Ionicons name="map-outline" size={48} color="#6366F1" />
           <Text style={styles.mapPlaceholderText}>
-              {location ? 'Interactive Community Map' : 'Enable Location for Map'}
+              {location ? t('home.map.title') : t('home.map.loading')}
           </Text>
           <Text style={styles.mapPlaceholderSubtext}>
-              Shows anonymized alerts within {CONFIG.ALERT_RADIUS_KM}km radius
+              {t('home.map.subtitle')}
           </Text>
         </View>
         )}
 
-        {/* Privacy Features */}
-        <View style={styles.privacyCard}>
-          <Text style={styles.sectionTitle}>🔒 Privacy First Design</Text>
-          <View style={styles.privacyFeature}>
-            <Ionicons name="shield-checkmark" size={16} color="#10B981" />
-            <Text style={styles.privacyText}>Anonymous reporting</Text>
-          </View>
-          <View style={styles.privacyFeature}>
-            <Ionicons name="time" size={16} color="#10B981" />
-            <Text style={styles.privacyText}>Auto-delete after 4 hours</Text>
-          </View>
-          <View style={styles.privacyFeature}>
-            <Ionicons name="location" size={16} color="#10B981" />
-            <Text style={styles.privacyText}>Location anonymized</Text>
-          </View>
-          <View style={styles.privacyFeature}>
-            <Ionicons name="eye-off" size={16} color="#10B981" />
-            <Text style={styles.privacyText}>No tracking</Text>
-          </View>
-          {servicesInitialized && (
-            <View style={styles.privacyFeature}>
-              <Ionicons name="notifications" size={16} color="#10B981" />
-              <Text style={styles.privacyText}>Smart location-based alerts</Text>
+        {/* Emergency Actions */}
+        <View style={styles.emergencyCard}>
+          <Text style={styles.sectionTitle}>🚨 {t('home.emergency.title')}</Text>
+          <Text style={styles.emergencyDescription}>
+            {t('home.emergency.description')}
+          </Text>
+          
+          {/* Panic Button - Coming Soon */}
+          <TouchableOpacity 
+            style={styles.panicButtonPlaceholder}
+            disabled={true}
+          >
+            <View style={styles.panicButtonContent}>
+              <Ionicons name="warning" size={32} color="#94A3B8" />
+              <View style={styles.panicButtonTextContainer}>
+                <Text style={styles.panicButtonTitle}>
+                  {t('home.emergency.panicButton.title')}
+                </Text>
+                <Text style={styles.panicButtonSubtitle}>
+                  {t('home.emergency.panicButton.comingSoon')}
+                </Text>
               </View>
-          )}
+            </View>
+          </TouchableOpacity>
+
+          <View style={styles.emergencyNote}>
+            <Ionicons name="information-circle" size={16} color="#6366F1" />
+            <Text style={styles.emergencyNoteText}>
+              {t('home.emergency.note')}
+            </Text>
+          </View>
         </View>
       </ScrollView>
 
@@ -488,7 +548,7 @@ export default function HomeScreen() {
           onPress={() => location && router.push('/report')}
         >
           <Ionicons name="alert-circle" size={24} color="#fff" />
-          <Text style={styles.reportButtonText}>Report Activity</Text>
+          <Text style={styles.reportButtonText}>{t('home.quickActions.report')}</Text>
         </TouchableOpacity>
       </View>
       
@@ -619,7 +679,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 8,
   },
-  privacyCard: {
+  emergencyCard: {
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
     marginHorizontal: 24,
     padding: 20,
@@ -628,15 +688,54 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.2)',
   },
-  privacyFeature: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 12,
-    gap: 12,
-  },
-  privacyText: {
+  emergencyDescription: {
     color: '#CBD5E1',
     fontSize: 14,
+    marginBottom: 20,
+    lineHeight: 20,
+  },
+  panicButtonPlaceholder: {
+    backgroundColor: 'rgba(239, 68, 68, 0.1)',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(239, 68, 68, 0.2)',
+    opacity: 0.6,
+  },
+  panicButtonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 16,
+  },
+  panicButtonTextContainer: {
+    flex: 1,
+  },
+  panicButtonTitle: {
+    color: '#EF4444',
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 4,
+  },
+  panicButtonSubtitle: {
+    color: '#94A3B8',
+    fontSize: 12,
+  },
+  emergencyNote: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 8,
+    backgroundColor: 'rgba(99, 102, 241, 0.1)',
+    padding: 12,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: 'rgba(99, 102, 241, 0.2)',
+  },
+  emergencyNoteText: {
+    color: '#CBD5E1',
+    fontSize: 12,
+    lineHeight: 16,
+    flex: 1,
   },
   bottomContainer: {
     position: 'absolute',

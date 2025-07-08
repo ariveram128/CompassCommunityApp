@@ -166,12 +166,11 @@
         },
         "tip": "Only verify reports you can personally confirm. Your verification helps the community assess report accuracy."
       },
-      "navigation": {
-        "previous": "Previous",
-        "next": "Next",
-        "continue": "Continue"
+      "tips": {
+        "title": "Quick Tip"
       },
-      "quickTip": "Quick Tip",
+      "next": "Next",
+      "continue": "Continue",
       "progress": "Step 3 of 5"
     },
     "privacy": {
@@ -247,6 +246,31 @@
     "complete": {
       "title": "All Set!",
       "subtitle": "Your Compass Community app is ready to use",
+      "welcomeTitle": "Welcome to Compass Community!",
+      "welcomeMessage": "You're all set to start using the app. Explore the map, submit reports, and help keep your community safe.",
+      "welcomeAction": "Let's Go!",
+      "allSet": "All Set!",
+      "appReady": "Your Compass Community app is ready to use",
+      "setupComplete": "Setup Complete",
+      "privacyConfigured": "Privacy settings configured",
+      "communityFeaturesActivated": "Community features activated",
+      "safetyProtocolsEnabled": "Safety protocols enabled",
+      "anonymousReportingReady": "Anonymous reporting ready",
+      "whatsNext": "What's Next?",
+      "exploreMap": "Explore the Map",
+      "checkReports": "Check out community reports in your area",
+      "submitFirstReport": "Submit Your First Report",
+      "shareSafetyInfo": "Help your community by sharing safety information",
+      "verifyReports": "Verify Community Reports",
+      "buildTrust": "Build trust by confirming reports you can verify",
+      "quickTips": "Quick Tips",
+      "reportsExpire": "• Reports automatically expire after 4 hours",
+      "anonymizedLocation": "• Your location is always anonymized to protect privacy",
+      "useVerification": "• Use the verification system to build community trust",
+      "accessSettings": "• Access settings anytime to adjust preferences",
+      "needHelp": "Need Help?",
+      "visitSettings": "Visit the Settings screen for tutorials, privacy information, and community guidelines.",
+      "startUsingApp": "Start Using App",
       "summary": {
         "title": "Setup Complete",
         "privacy": "Privacy settings configured",
@@ -289,42 +313,41 @@
     }
   },
   "home": {
+    "title": "Protected",
+    "subtitle": "Active community safety monitoring",
     "status": {
       "protected": "Protected",
+      "anonymous": "Anonymous location • 0 active reports • Push notifications enabled",
+      "membership": "New Member",
+      "verifications": "0 verifications sent",
+      "locationDisabled": "Location access disabled",
+      "enableLocation": "Enable location for community features and safety alerts",
+      "enable": "Enable Location",
       "setupRequired": "Setup Required",
       "initializing": "Initializing location services...",
-      "active": "✓ Community safety monitoring active",
-      "enable": "⚠ Enable location to join the network",
-      "enableButton": "Enable Location",
+      "active": "✓ Active community safety monitoring",
       "anonymized": "Anonymized location",
       "activeReports": "{{count}} active reports",
-      "pushEnabled": "• Push notifications enabled"
-    },
-    "verification": {
-      "trustLevel": {
-        "high": "High Trust",
-        "medium": "Medium Trust", 
-        "low": "Low Trust",
-        "new": "New User"
-      },
-      "submitted": "{{count}} verifications submitted"
+      "pushEnabled": "• Push notifications enabled",
+      "enableButton": "Enable Location"
     },
     "map": {
       "title": "Community Map",
-      "subtitle": "Real-time safety reports in your area",
-      "loading": "Loading map...",
-      "noReports": "No active reports in your area",
-      "tapToVerify": "Tap reports to verify"
+      "subtitle": "Shows anonymized alerts within {{radius}}km radius",
+      "placeholder": "Interactive Community Map",
+      "placeholderDisabled": "Enable Location for Map"
+    },
+    "emergency": {
+      "title": "Emergency Tools",
+      "description": "Quick access to emergency features and safety tools when you need them most.",
+      "panicButton": {
+        "title": "Emergency Alert",
+        "comingSoon": "Coming Soon - Instant emergency notifications"
+      },
+      "note": "For immediate emergencies, always call local emergency services (911)."
     },
     "quickActions": {
-      "title": "Quick Actions",
-      "report": "Report Activity",
-      "map": "View Map",
-      "settings": "Settings"
-    },
-    "recentActivity": {
-      "title": "Recent Activity",
-      "noReports": "No recent reports in your area"
+      "report": "Report Activity"
     }
   },
   "report": {

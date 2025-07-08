@@ -1,4 +1,6 @@
+import { useEffect, useState } from 'react';
 import { useTranslation as useI18nTranslation } from 'react-i18next';
+import { changeLanguage as changeLanguageWithStorage, getDeviceLanguage } from '../services/i18n/i18n';
 
 // Try to import expo-localization with fallback
 let Localization: any = null;
@@ -10,30 +12,39 @@ try {
 
 export const useTranslation = () => {
   const { t, i18n: i18nInstance } = useI18nTranslation();
+  const [currentLanguage, setCurrentLanguage] = useState(i18nInstance.language);
+  
+  useEffect(() => {
+    // Listen for language changes
+    const handleLanguageChange = (lng: string) => {
+      console.log('[useTranslation] Language changed to:', lng);
+      setCurrentLanguage(lng);
+    };
+
+    i18nInstance.on('languageChanged', handleLanguageChange);
+    
+    return () => {
+      i18nInstance.off('languageChanged', handleLanguageChange);
+    };
+  }, [i18nInstance]);
   
   const changeLanguage = async (lang: string) => {
     try {
-      await i18nInstance.changeLanguage(lang);
-      // You could also store the preference in SecureStore here if needed
-      console.log(`[DEV] Language changed to: ${lang}`);
+      console.log(`[useTranslation] Changing language from ${currentLanguage} to ${lang}`);
+      await changeLanguageWithStorage(lang);
+      setCurrentLanguage(lang);
+      console.log(`[useTranslation] Language changed successfully to: ${lang}`);
     } catch (error) {
-      console.error('[DEV] Error changing language:', error);
+      console.error('[useTranslation] Error changing language:', error);
     }
   };
 
   const getCurrentLanguage = () => {
-    return i18nInstance.language;
+    return currentLanguage;
   };
 
-  const getDeviceLanguage = () => {
-    if (Localization) {
-      return Localization.getLocales()[0]?.languageCode || 'en';
-    }
-    // Fallback for web or when expo-localization is not available
-    if (typeof navigator !== 'undefined' && navigator.language) {
-      return navigator.language.split('-')[0];
-    }
-    return 'en';
+  const getDeviceLanguageFromHook = () => {
+    return getDeviceLanguage();
   };
 
   const isRTL = () => {
@@ -52,8 +63,9 @@ export const useTranslation = () => {
     t,
     changeLanguage,
     getCurrentLanguage,
-    getDeviceLanguage,
+    getDeviceLanguage: getDeviceLanguageFromHook,
     isRTL,
+    currentLanguage, // Expose current language for components that need to re-render
     // Helper for common translations
     common: {
       ok: t('common.ok'),

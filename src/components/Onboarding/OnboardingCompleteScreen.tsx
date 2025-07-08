@@ -2,6 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import React, { useEffect, useRef } from 'react';
 import { Animated, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTranslation } from '../../hooks/useTranslation';
 
 interface OnboardingCompleteScreenProps {
   onComplete: () => void;
@@ -9,6 +10,7 @@ interface OnboardingCompleteScreenProps {
 }
 
 export function OnboardingCompleteScreen({ onComplete, onBack }: OnboardingCompleteScreenProps) {
+  const { t } = useTranslation();
   const scaleAnim = useRef(new Animated.Value(0)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(50)).current;
@@ -84,9 +86,9 @@ export function OnboardingCompleteScreen({ onComplete, onBack }: OnboardingCompl
                 }
               ]}
             >
-              <Text style={styles.successTitle}>All Set!</Text>
+              <Text style={styles.successTitle}>{t('onboarding.complete.allSet')}</Text>
               <Text style={styles.successSubtitle}>
-                Your Compass Community app is ready to use
+                {t('onboarding.complete.appReady')}
               </Text>
             </Animated.View>
           </View>
@@ -104,28 +106,28 @@ export function OnboardingCompleteScreen({ onComplete, onBack }: OnboardingCompl
             <View style={styles.summaryCard}>
               <View style={styles.summaryHeader}>
                 <Ionicons name="list-circle" size={24} color="#10B981" />
-                <Text style={styles.summaryTitle}>Setup Complete</Text>
+                <Text style={styles.summaryTitle}>{t('onboarding.complete.setupComplete')}</Text>
               </View>
               
               <View style={styles.summaryList}>
                 <View style={styles.summaryItem}>
                   <Ionicons name="checkmark-circle" size={20} color="#10B981" />
-                  <Text style={styles.summaryText}>Privacy settings configured</Text>
+                  <Text style={styles.summaryText}>{t('onboarding.complete.privacyConfigured')}</Text>
                 </View>
                 
                 <View style={styles.summaryItem}>
                   <Ionicons name="checkmark-circle" size={20} color="#10B981" />
-                  <Text style={styles.summaryText}>Community features activated</Text>
+                  <Text style={styles.summaryText}>{t('onboarding.complete.communityFeaturesActivated')}</Text>
                 </View>
                 
                 <View style={styles.summaryItem}>
                   <Ionicons name="checkmark-circle" size={20} color="#10B981" />
-                  <Text style={styles.summaryText}>Safety protocols enabled</Text>
+                  <Text style={styles.summaryText}>{t('onboarding.complete.safetyProtocolsEnabled')}</Text>
                 </View>
                 
                 <View style={styles.summaryItem}>
                   <Ionicons name="checkmark-circle" size={20} color="#10B981" />
-                  <Text style={styles.summaryText}>Anonymous reporting ready</Text>
+                  <Text style={styles.summaryText}>{t('onboarding.complete.anonymousReportingReady')}</Text>
                 </View>
               </View>
             </View>
@@ -141,7 +143,7 @@ export function OnboardingCompleteScreen({ onComplete, onBack }: OnboardingCompl
               }
             ]}
           >
-            <Text style={styles.sectionTitle}>What's Next?</Text>
+            <Text style={styles.sectionTitle}>{t('onboarding.complete.whatsNext')}</Text>
             
             <View style={styles.stepsList}>
               <View style={styles.stepItem}>
@@ -149,9 +151,9 @@ export function OnboardingCompleteScreen({ onComplete, onBack }: OnboardingCompl
                   <Text style={styles.stepNumber}>1</Text>
                 </View>
                 <View style={styles.stepContent}>
-                  <Text style={styles.stepTitle}>Explore the Map</Text>
+                  <Text style={styles.stepTitle}>{t('onboarding.complete.exploreMap')}</Text>
                   <Text style={styles.stepDescription}>
-                    Check out community reports in your area
+                    {t('onboarding.complete.checkReports')}
                   </Text>
                 </View>
               </View>
@@ -161,9 +163,9 @@ export function OnboardingCompleteScreen({ onComplete, onBack }: OnboardingCompl
                   <Text style={styles.stepNumber}>2</Text>
                 </View>
                 <View style={styles.stepContent}>
-                  <Text style={styles.stepTitle}>Submit Your First Report</Text>
+                  <Text style={styles.stepTitle}>{t('onboarding.complete.submitFirstReport')}</Text>
                   <Text style={styles.stepDescription}>
-                    Help your community by sharing safety information
+                    {t('onboarding.complete.shareSafetyInfo')}
                   </Text>
                 </View>
               </View>
@@ -173,9 +175,9 @@ export function OnboardingCompleteScreen({ onComplete, onBack }: OnboardingCompl
                   <Text style={styles.stepNumber}>3</Text>
                 </View>
                 <View style={styles.stepContent}>
-                  <Text style={styles.stepTitle}>Verify Community Reports</Text>
+                  <Text style={styles.stepTitle}>{t('onboarding.complete.verifyReports')}</Text>
                   <Text style={styles.stepDescription}>
-                    Build trust by confirming reports you can verify
+                    {t('onboarding.complete.buildTrust')}
                   </Text>
                 </View>
               </View>
@@ -195,21 +197,21 @@ export function OnboardingCompleteScreen({ onComplete, onBack }: OnboardingCompl
             <View style={styles.tipsCard}>
               <View style={styles.tipsHeader}>
                 <Ionicons name="bulb" size={24} color="#F59E0B" />
-                <Text style={styles.tipsTitle}>Quick Tips</Text>
+                <Text style={styles.tipsTitle}>{t('onboarding.complete.quickTips')}</Text>
               </View>
               
               <View style={styles.tipsList}>
                 <Text style={styles.tipItem}>
-                  • Reports automatically expire after 4 hours
+                  {t('onboarding.complete.reportsExpire')}
                 </Text>
                 <Text style={styles.tipItem}>
-                  • Your location is always anonymized to protect privacy
+                  {t('onboarding.complete.anonymizedLocation')}
                 </Text>
                 <Text style={styles.tipItem}>
-                  • Use the verification system to build community trust
+                  {t('onboarding.complete.useVerification')}
                 </Text>
                 <Text style={styles.tipItem}>
-                  • Access settings anytime to adjust preferences
+                  {t('onboarding.complete.accessSettings')}
                 </Text>
               </View>
             </View>
@@ -228,11 +230,11 @@ export function OnboardingCompleteScreen({ onComplete, onBack }: OnboardingCompl
             <View style={styles.supportCard}>
               <View style={styles.supportHeader}>
                 <Ionicons name="help-circle" size={24} color="#6366F1" />
-                <Text style={styles.supportTitle}>Need Help?</Text>
+                <Text style={styles.supportTitle}>{t('onboarding.complete.needHelp')}</Text>
               </View>
               
               <Text style={styles.supportText}>
-                Visit the Settings screen for tutorials, privacy information, and community guidelines.
+                {t('onboarding.complete.visitSettings')}
               </Text>
             </View>
           </Animated.View>
@@ -249,7 +251,7 @@ export function OnboardingCompleteScreen({ onComplete, onBack }: OnboardingCompl
           >
             <TouchableOpacity style={styles.primaryButton} onPress={onComplete}>
               <View style={styles.buttonGradient}>
-                <Text style={styles.primaryButtonText}>Start Using App</Text>
+                <Text style={styles.primaryButtonText}>{t('onboarding.complete.startUsingApp')}</Text>
                 <Ionicons name="arrow-forward" size={20} color="#ffffff" />
               </View>
             </TouchableOpacity>
@@ -264,7 +266,7 @@ export function OnboardingCompleteScreen({ onComplete, onBack }: OnboardingCompl
               <View style={[styles.dot, styles.completedDot]} />
               <View style={[styles.dot, styles.completedDot]} />
             </View>
-            <Text style={styles.progressText}>Setup Complete!</Text>
+            <Text style={styles.progressText}>{t('onboarding.complete.setupComplete')}</Text>
           </View>
         </ScrollView>
       </View>

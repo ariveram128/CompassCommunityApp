@@ -2,6 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTranslation } from '../../hooks/useTranslation';
 
 interface PrivacyExplanationScreenProps {
   onNext: () => void;
@@ -10,21 +11,23 @@ interface PrivacyExplanationScreenProps {
 }
 
 export function PrivacyExplanationScreen({ onNext, onSkip, onBack }: PrivacyExplanationScreenProps) {
+  const { t } = useTranslation();
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.gradient}>
-        <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-          {/* Header */}
-          <View style={styles.header}>
-            <TouchableOpacity style={styles.backButton} onPress={onBack}>
-              <Ionicons name="arrow-back" size={24} color="#6B7280" />
-            </TouchableOpacity>
-            <Text style={styles.headerTitle}>Privacy First</Text>
-            <TouchableOpacity style={styles.skipButton} onPress={onSkip}>
-              <Text style={styles.skipButtonText}>Skip</Text>
-            </TouchableOpacity>
-          </View>
+        {/* Header */}
+        <View style={styles.header}>
+          <TouchableOpacity style={styles.backButton} onPress={onBack}>
+            <Ionicons name="arrow-back" size={24} color="#6B7280" />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>{t('onboarding.privacy.title')}</Text>
+          <TouchableOpacity style={styles.skipButton} onPress={onSkip}>
+            <Text style={styles.skipButtonText}>{t('onboarding.common.skip')}</Text>
+          </TouchableOpacity>
+        </View>
 
+        <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
           {/* Hero Section */}
           <View style={styles.heroSection}>
             <View style={styles.iconContainer}>
@@ -33,25 +36,26 @@ export function PrivacyExplanationScreen({ onNext, onSkip, onBack }: PrivacyExpl
               </View>
             </View>
             
-            <Text style={styles.title}>Your Privacy Matters</Text>
-            <Text style={styles.subtitle}>
-              Built with the highest privacy standards for vulnerable communities
+            <Text style={styles.title}>{t('onboarding.privacy.title')}</Text>
+            <Text style={styles.subtitle}>{t('onboarding.privacy.subtitle')}</Text>
+            <Text style={styles.description}>
+              {t('onboarding.privacy.description')}
             </Text>
           </View>
 
           {/* Privacy Principles */}
           <View style={styles.principlesSection}>
-            <Text style={styles.sectionTitle}>Our Privacy Principles</Text>
+            <Text style={styles.sectionTitle}>{t('onboarding.privacy.principles.title')}</Text>
             
             <View style={styles.principlesList}>
               <View style={styles.principleItem}>
                 <View style={[styles.principleIcon, { backgroundColor: '#EF4444' }]}>
-                  <Ionicons name="close-circle" size={28} color="#ffffff" />
+                  <Ionicons name="eye-off" size={28} color="#ffffff" />
                 </View>
                 <View style={styles.principleContent}>
-                  <Text style={styles.principleTitle}>Zero Data Collection</Text>
+                  <Text style={styles.principleTitle}>{t('onboarding.privacy.principles.zeroData.title')}</Text>
                   <Text style={styles.principleDescription}>
-                    We collect absolutely zero personal information. No names, emails, phone numbers, or user accounts.
+                    {t('onboarding.privacy.principles.zeroData.description')}
                   </Text>
                 </View>
               </View>
@@ -61,9 +65,9 @@ export function PrivacyExplanationScreen({ onNext, onSkip, onBack }: PrivacyExpl
                   <Ionicons name="phone-portrait" size={28} color="#ffffff" />
                 </View>
                 <View style={styles.principleContent}>
-                  <Text style={styles.principleTitle}>Local-First Storage</Text>
+                  <Text style={styles.principleTitle}>{t('onboarding.privacy.principles.localFirst.title')}</Text>
                   <Text style={styles.principleDescription}>
-                    All your data stays on your device. Reports and settings never leave your phone.
+                    {t('onboarding.privacy.principles.localFirst.description')}
                   </Text>
                 </View>
               </View>
@@ -73,9 +77,9 @@ export function PrivacyExplanationScreen({ onNext, onSkip, onBack }: PrivacyExpl
                   <Ionicons name="location" size={28} color="#ffffff" />
                 </View>
                 <View style={styles.principleContent}>
-                  <Text style={styles.principleTitle}>Location Anonymization</Text>
+                  <Text style={styles.principleTitle}>{t('onboarding.privacy.principles.anonymization.title')}</Text>
                   <Text style={styles.principleDescription}>
-                    Your precise location is never stored. We use 100m grid squares to protect your privacy.
+                    {t('onboarding.privacy.principles.anonymization.description')}
                   </Text>
                 </View>
               </View>
@@ -85,9 +89,9 @@ export function PrivacyExplanationScreen({ onNext, onSkip, onBack }: PrivacyExpl
                   <Ionicons name="timer" size={28} color="#ffffff" />
                 </View>
                 <View style={styles.principleContent}>
-                  <Text style={styles.principleTitle}>Automatic Deletion</Text>
+                  <Text style={styles.principleTitle}>{t('onboarding.privacy.principles.autoDelete.title')}</Text>
                   <Text style={styles.principleDescription}>
-                    All reports automatically expire and delete after 4 hours. Nothing is permanent.
+                    {t('onboarding.privacy.principles.autoDelete.description')}
                   </Text>
                 </View>
               </View>
@@ -99,35 +103,35 @@ export function PrivacyExplanationScreen({ onNext, onSkip, onBack }: PrivacyExpl
             <View style={styles.safeguardsCard}>
               <View style={styles.safeguardsHeader}>
                 <Ionicons name="construct" size={24} color="#F59E0B" />
-                <Text style={styles.safeguardsTitle}>Technical Safeguards</Text>
+                <Text style={styles.safeguardsTitle}>{t('onboarding.privacy.safeguards.title')}</Text>
               </View>
               
               <View style={styles.safeguardsList}>
                 <View style={styles.safeguardItem}>
                   <Ionicons name="lock-closed" size={16} color="#10B981" />
                   <Text style={styles.safeguardText}>
-                    <Text style={styles.highlight}>Encrypted Storage:</Text> All local data is encrypted using industry-standard algorithms
+                    <Text style={styles.highlight}>{t('onboarding.privacy.safeguards.encryption.title')}</Text> {t('onboarding.privacy.safeguards.encryption.description')}
                   </Text>
                 </View>
 
                 <View style={styles.safeguardItem}>
                   <Ionicons name="analytics" size={16} color="#10B981" />
                   <Text style={styles.safeguardText}>
-                    <Text style={styles.highlight}>No Analytics:</Text> Zero tracking pixels, crash reports, or usage analytics
+                    <Text style={styles.highlight}>{t('onboarding.privacy.safeguards.analytics.title')}</Text> {t('onboarding.privacy.safeguards.analytics.description')}
                   </Text>
                 </View>
 
                 <View style={styles.safeguardItem}>
                   <Ionicons name="code-working" size={16} color="#10B981" />
                   <Text style={styles.safeguardText}>
-                    <Text style={styles.highlight}>Open Source:</Text> Code is publicly auditable for transparency
+                    <Text style={styles.highlight}>{t('onboarding.privacy.safeguards.openSource.title')}</Text> {t('onboarding.privacy.safeguards.openSource.description')}
                   </Text>
                 </View>
 
                 <View style={styles.safeguardItem}>
                   <Ionicons name="business" size={16} color="#10B981" />
                   <Text style={styles.safeguardText}>
-                    <Text style={styles.highlight}>No Third Parties:</Text> No external services, ads, or data brokers
+                    <Text style={styles.highlight}>{t('onboarding.privacy.safeguards.thirdParties.title')}</Text> {t('onboarding.privacy.safeguards.thirdParties.description')}
                   </Text>
                 </View>
               </View>
@@ -139,90 +143,86 @@ export function PrivacyExplanationScreen({ onNext, onSkip, onBack }: PrivacyExpl
             <View style={styles.legalCard}>
               <View style={styles.legalHeader}>
                 <Ionicons name="document-text" size={24} color="#6366F1" />
-                <Text style={styles.legalTitle}>Legal Protection</Text>
+                <Text style={styles.legalTitle}>{t('onboarding.privacy.legal.title')}</Text>
               </View>
               
               <Text style={styles.legalText}>
-                This app was designed specifically for immigrant and vulnerable communities who may face legal risks. By design, we cannot provide user data to law enforcement or government agencies because <Text style={styles.highlight}>we do not collect it in the first place</Text>.
+                {t('onboarding.privacy.legal.description')} <Text style={styles.highlight}>{t('onboarding.privacy.legal.highlight')}</Text>.
               </Text>
               
-              <Text style={styles.legalSubtext}>
-                Your safety and legal protection were our top priorities during development.
+              <Text style={styles.legalSubtitle}>
+                {t('onboarding.privacy.legal.subtitle')}
               </Text>
             </View>
           </View>
 
           {/* Data Usage */}
-          <View style={styles.dataSection}>
-            <Text style={styles.sectionTitle}>What Data We Actually Use</Text>
+          <View style={styles.dataUsageSection}>
+            <Text style={styles.sectionTitle}>{t('onboarding.privacy.dataUsage.title')}</Text>
             
-            <View style={styles.dataCard}>
-              <View style={styles.dataItem}>
-                <View style={styles.dataHeader}>
-                  <Ionicons name="checkmark-circle" size={20} color="#10B981" />
-                  <Text style={styles.dataTitle}>Anonymized Location Grid</Text>
+            <View style={styles.dataUsageList}>
+              <View style={styles.dataUsageItem}>
+                <View style={styles.dataUsageIcon}>
+                  <Ionicons name="grid" size={20} color="#6366F1" />
                 </View>
-                <Text style={styles.dataDescription}>
-                  ~100m grid squares for community matching (e.g., "Grid 42A" instead of precise coordinates)
-                </Text>
+                <View style={styles.dataUsageContent}>
+                  <Text style={styles.dataUsageTitle}>{t('onboarding.privacy.dataUsage.locationGrid.title')}</Text>
+                  <Text style={styles.dataUsageDescription}>
+                    {t('onboarding.privacy.dataUsage.locationGrid.description')}
+                  </Text>
+                </View>
               </View>
 
-              <View style={styles.dataItem}>
-                <View style={styles.dataHeader}>
-                  <Ionicons name="checkmark-circle" size={20} color="#10B981" />
-                  <Text style={styles.dataTitle}>Report Content</Text>
+              <View style={styles.dataUsageItem}>
+                <View style={styles.dataUsageIcon}>
+                  <Ionicons name="document-outline" size={20} color="#6366F1" />
                 </View>
-                <Text style={styles.dataDescription}>
-                  Safety information you choose to share with the community (stored locally only)
-                </Text>
+                <View style={styles.dataUsageContent}>
+                  <Text style={styles.dataUsageTitle}>{t('onboarding.privacy.dataUsage.reportContent.title')}</Text>
+                  <Text style={styles.dataUsageDescription}>
+                    {t('onboarding.privacy.dataUsage.reportContent.description')}
+                  </Text>
+                </View>
               </View>
 
-              <View style={styles.dataItem}>
-                <View style={styles.dataHeader}>
-                  <Ionicons name="checkmark-circle" size={20} color="#10B981" />
-                  <Text style={styles.dataTitle}>App Preferences</Text>
+              <View style={styles.dataUsageItem}>
+                <View style={styles.dataUsageIcon}>
+                  <Ionicons name="settings" size={20} color="#6366F1" />
                 </View>
-                <Text style={styles.dataDescription}>
-                  Settings and preferences to improve your experience (stored locally only)
-                </Text>
+                <View style={styles.dataUsageContent}>
+                  <Text style={styles.dataUsageTitle}>{t('onboarding.privacy.dataUsage.preferences.title')}</Text>
+                  <Text style={styles.dataUsageDescription}>
+                    {t('onboarding.privacy.dataUsage.preferences.description')}
+                  </Text>
+                </View>
               </View>
             </View>
-          </View>
-
-          {/* Action Buttons */}
-          <View style={styles.actionSection}>
-            <Text style={styles.actionText}>
-              Ready to experience privacy-first community safety?
-            </Text>
-            
-            <View style={styles.buttonContainer}>
-              <TouchableOpacity style={styles.primaryButton} onPress={onNext}>
-                <View style={styles.buttonGradient}>
-                  <Text style={styles.primaryButtonText}>I Understand</Text>
-                  <Ionicons name="arrow-forward" size={20} color="#ffffff" />
-                </View>
-              </TouchableOpacity>
-              
-              <TouchableOpacity style={styles.secondaryButton} onPress={onSkip}>
-                <Text style={styles.secondaryButtonText}>
-                  Read Privacy Policy
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-
-          {/* Progress Indicator */}
-          <View style={styles.progressSection}>
-            <View style={styles.progressDots}>
-              <View style={[styles.dot, styles.completedDot]} />
-              <View style={[styles.dot, styles.completedDot]} />
-              <View style={[styles.dot, styles.completedDot]} />
-              <View style={[styles.dot, styles.activeDot]} />
-              <View style={styles.dot} />
-            </View>
-            <Text style={styles.progressText}>Step 4 of 5</Text>
           </View>
         </ScrollView>
+
+        {/* Action Button */}
+        <View style={styles.actionSection}>
+          <Text style={styles.actionText}>
+            {t('onboarding.privacy.actionText')}
+          </Text>
+          
+          <View style={styles.actionButtons}>
+            <TouchableOpacity style={styles.policyButton} onPress={() => {}}>
+              <Ionicons name="document-text" size={20} color="#6366F1" />
+              <Text style={styles.policyButtonText}>{t('onboarding.privacy.actions.policy')}</Text>
+            </TouchableOpacity>
+            
+            <TouchableOpacity style={styles.continueButton} onPress={onNext}>
+              <Text style={styles.continueButtonText}>{t('onboarding.privacy.actions.understand')}</Text>
+              <Ionicons name="chevron-forward" size={24} color="#ffffff" />
+            </TouchableOpacity>
+          </View>
+
+          {/* Progress */}
+          <View style={styles.progressSection}>
+            <Text style={styles.progressText}>{t('onboarding.privacy.progress')}</Text>
+          </View>
+        </View>
       </View>
     </SafeAreaView>
   );
@@ -304,6 +304,13 @@ const styles = StyleSheet.create({
     color: '#6B7280',
     textAlign: 'center',
     lineHeight: 24,
+  },
+  description: {
+    fontSize: 15,
+    color: '#D1D5DB',
+    textAlign: 'center',
+    marginTop: 10,
+    lineHeight: 22,
   },
   principlesSection: {
     marginBottom: 32,
@@ -412,41 +419,47 @@ const styles = StyleSheet.create({
     lineHeight: 22,
     marginBottom: 12,
   },
-  legalSubtext: {
+  legalSubtitle: {
     fontSize: 14,
     color: '#9CA3AF',
     fontStyle: 'italic',
     lineHeight: 20,
   },
-  dataSection: {
+  dataUsageSection: {
     marginBottom: 32,
   },
-  dataCard: {
-    backgroundColor: 'rgba(16, 185, 129, 0.1)',
-    borderRadius: 16,
-    padding: 20,
-    borderWidth: 1,
-    borderColor: 'rgba(16, 185, 129, 0.2)',
+  dataUsageList: {
+    gap: 16,
   },
-  dataItem: {
-    marginBottom: 16,
-  },
-  dataHeader: {
+  dataUsageItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 6,
+    backgroundColor: 'rgba(99, 102, 241, 0.1)',
+    borderRadius: 16,
+    padding: 20,
   },
-  dataTitle: {
+  dataUsageIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(99, 102, 241, 0.2)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 16,
+  },
+  dataUsageContent: {
+    flex: 1,
+  },
+  dataUsageTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#10B981',
-    marginLeft: 8,
+    color: '#6366F1',
+    marginBottom: 4,
   },
-  dataDescription: {
+  dataUsageDescription: {
     fontSize: 14,
     color: '#D1D5DB',
     lineHeight: 20,
-    marginLeft: 28,
   },
   actionSection: {
     alignItems: 'center',
@@ -459,21 +472,34 @@ const styles = StyleSheet.create({
     marginBottom: 24,
     lineHeight: 24,
   },
-  buttonContainer: {
+  actionButtons: {
+    flexDirection: 'row',
+    justifyContent: 'center',
     alignItems: 'center',
-    width: '100%',
-  },
-  primaryButton: {
+    gap: 16,
     width: '100%',
     maxWidth: 280,
-    marginBottom: 16,
   },
-  buttonGradient: {
+  policyButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 16,
-    paddingHorizontal: 32,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 12,
+    backgroundColor: 'rgba(99, 102, 241, 0.1)',
+    borderWidth: 1,
+    borderColor: 'rgba(99, 102, 241, 0.2)',
+  },
+  policyButtonText: {
+    fontSize: 14,
+    color: '#6366F1',
+    marginLeft: 8,
+  },
+  continueButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
     borderRadius: 12,
     backgroundColor: '#EF4444',
     shadowColor: '#EF4444',
@@ -482,42 +508,15 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 8,
   },
-  primaryButtonText: {
+  continueButtonText: {
     fontSize: 16,
     fontWeight: 'bold',
     color: '#ffffff',
     marginRight: 8,
   },
-  secondaryButton: {
-    paddingVertical: 12,
-  },
-  secondaryButtonText: {
-    fontSize: 14,
-    color: '#6B7280',
-    textDecorationLine: 'underline',
-  },
   progressSection: {
     alignItems: 'center',
     marginTop: 20,
-  },
-  progressDots: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  dot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: 'rgba(107, 114, 128, 0.3)',
-    marginHorizontal: 4,
-  },
-  activeDot: {
-    backgroundColor: '#EF4444',
-    width: 24,
-  },
-  completedDot: {
-    backgroundColor: '#10B981',
   },
   progressText: {
     fontSize: 12,

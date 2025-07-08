@@ -4,53 +4,42 @@ import React, { useEffect, useState } from 'react';
 import { ErrorBoundary } from '../src/components/ErrorBoundary';
 import { ErrorService } from '../src/services/Error/ErrorService';
 // Initialize i18n translations
-import { initI18n } from '../src/services/i18n/i18n';
+import '../src/services/i18n/i18n';
 
 export default function RootLayout() {
-  const [isI18nReady, setIsI18nReady] = useState(false);
+  const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
     // Initialize error handling first
     ErrorService.initialize();
 
-    // Initialize i18n
-    const initializeI18n = async () => {
-      try {
-        await initI18n();
-        setIsI18nReady(true);
-        console.log('[App] i18n initialized successfully');
-      } catch (error) {
-        console.error('[App] Failed to initialize i18n:', error);
-        // Still allow app to continue with fallback
-        setIsI18nReady(true);
-      }
-    };
-
     // Initialize core services on app start
     const initializeServices = async () => {
       try {
+        // Wait a moment for i18n to finish initializing
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
         // Import services dynamically to avoid circular dependencies
         const { NotificationService } = await import('../src/services/Notification/NotificationService');
         await NotificationService.initialize();
         console.log('App services initialized');
+        setIsReady(true);
       } catch (error) {
         console.error('Failed to initialize app services:', error);
         ErrorService.logServiceError('App', 'initializeServices', error, {
           showToUser: false,
           context: { phase: 'app_startup' }
         });
+        // Still allow app to continue
+        setIsReady(true);
       }
     };
 
-    // Initialize both in parallel
-    Promise.all([
-      initializeI18n(),
-      initializeServices()
-    ]);
+    initializeServices();
   }, []);
 
-  // Don't render anything until i18n is ready
-  if (!isI18nReady) {
+  // Don't render anything until services are ready
+  if (!isReady) {
     return null; // or a loading screen
   }
 
@@ -88,10 +77,8 @@ export default function RootLayout() {
         <Stack.Screen 
           name="settings" 
           options={{ 
-            title: 'Privacy Settings',
-            headerStyle: {
-              backgroundColor: '#2a2a2a',
-            }
+            title: 'Configuración',
+            headerShown: false
           }} 
         />
         <Stack.Screen 
