@@ -5,6 +5,7 @@ import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-nati
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { CommunityMap } from '../src/components/Map';
+import { OnboardingModal } from '../src/components/Onboarding/OnboardingModal';
 import { CONFIG } from '../src/constants/config';
 import { useCustomAlert } from '../src/hooks/useCustomAlert';
 import { useLocation } from '../src/hooks/useLocation';
@@ -12,6 +13,7 @@ import { useReports } from '../src/hooks/useReports';
 import { useVerification } from '../src/hooks/useVerification';
 import { ErrorService } from '../src/services/Error/ErrorService';
 import { NotificationService } from '../src/services/Notification/NotificationService';
+import { OnboardingService } from '../src/services/Onboarding/OnboardingService';
 import type { CommunityReport } from '../src/services/Report/ReportService';
 import { ReportService } from '../src/services/Report/ReportService';
 import { DevUtils } from '../src/utils/DevUtils';
@@ -25,20 +27,29 @@ export default function HomeScreen() {
   const { showAlert, AlertComponent } = useCustomAlert();
   const [showMap, setShowMap] = useState(true);
   const [servicesInitialized, setServicesInitialized] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
 
   // Add ref to track last location to prevent infinite updates
   const lastLocationRef = useRef<{latitude: number; longitude: number} | null>(null);
 
-  // Initialize services
+  // Initialize services and check onboarding
   useEffect(() => {
     const initializeServices = async () => {
       try {
         DevUtils.log('Starting service initialization...');
         await ErrorService.initialize();
+        await OnboardingService.initialize();
         await NotificationService.initialize();
         await ReportService.initialize();
         setServicesInitialized(true);
         DevUtils.log('App services initialized');
+
+        // Check if we should show onboarding
+        const shouldShow = await OnboardingService.shouldShowOnboarding();
+        if (shouldShow) {
+          DevUtils.log('Showing onboarding to new user');
+          setShowOnboarding(true);
+        }
       } catch (error) {
         DevUtils.error('Failed to initialize services:', error);
         setServicesInitialized(true); // Still allow app to work
@@ -109,12 +120,61 @@ export default function HomeScreen() {
         },
         {
           text: 'Show Verification Stats',
-          style: 'primary' as AlertActionStyle,
+          style: 'default' as AlertActionStyle,
           onPress: () => showVerificationStats()
+        },
+        {
+          text: 'Show Onboarding',
+          style: 'primary' as AlertActionStyle,
+          onPress: () => setShowOnboarding(true)
+        },
+        {
+          text: 'Reset Onboarding',
+          style: 'destructive' as AlertActionStyle,
+          onPress: () => resetOnboarding()
         }
       ],
       { icon: 'code-slash', iconColor: '#6366F1' }
     );
+  };
+
+  const resetOnboarding = async () => {
+    try {
+      await OnboardingService.resetOnboarding();
+      showAlert(
+        'Onboarding Reset',
+        'Onboarding has been reset. The app will show onboarding on next launch.',
+        [{ text: 'OK', style: 'primary' as AlertActionStyle }],
+        { icon: 'refresh', iconColor: '#10B981' }
+      );
+      DevUtils.log('Onboarding reset by developer');
+    } catch (error) {
+      DevUtils.error('Failed to reset onboarding:', error);
+      showAlert(
+        'Error',
+        'Failed to reset onboarding.',
+        [{ text: 'OK', style: 'primary' as AlertActionStyle }],
+        { icon: 'alert-circle', iconColor: '#EF4444' }
+      );
+    }
+  };
+
+  const handleOnboardingComplete = () => {
+    setShowOnboarding(false);
+    DevUtils.log('User completed onboarding');
+    
+    // Show welcome message
+    showAlert(
+      'Welcome to Compass Community!',
+      'You\'re all set to start using the app. Explore the map, submit reports, and help keep your community safe.',
+      [{ text: 'Let\'s Go!', style: 'primary' as AlertActionStyle }],
+      { icon: 'checkmark-circle', iconColor: '#10B981' }
+    );
+  };
+
+  const handleOnboardingSkip = () => {
+    setShowOnboarding(false);
+    DevUtils.log('User skipped onboarding');
   };
 
   const generateSampleVerifications = async () => {
@@ -433,6 +493,11 @@ export default function HomeScreen() {
       </View>
       
       <AlertComponent />
+      <OnboardingModal
+        visible={showOnboarding}
+        onComplete={handleOnboardingComplete}
+        onSkip={handleOnboardingSkip}
+      />
     </SafeAreaView>
   );
 }

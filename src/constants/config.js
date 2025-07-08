@@ -37,7 +37,7 @@ const getConfig = () => {
     HIGH_PRIORITY_RADIUS_KM: 3,
     
     // Report System Configuration
-    REPORT_EXPIRY_HOURS: 4,
+  REPORT_EXPIRY_HOURS: 4,
     MAX_REPORTS_PER_DAY: IS_PRODUCTION ? 5 : 20, // Stricter limits in production
     RATE_LIMIT_MINUTES: IS_PRODUCTION ? 5 : 1, // 5 min cooldown in prod, 1 min in dev
     
@@ -66,7 +66,7 @@ const getConfig = () => {
     // Security Configuration
     HASH_ROUNDS: IS_PRODUCTION ? 12 : 8,
     SESSION_TIMEOUT_HOURS: 24,
-    
+  
     // Logging Configuration
     LOG_LEVEL: IS_PRODUCTION ? 'error' : 'debug',
     ENABLE_VERBOSE_LOGGING: IS_DEV,

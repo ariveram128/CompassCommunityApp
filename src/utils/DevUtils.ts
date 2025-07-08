@@ -40,6 +40,17 @@ export class DevUtils {
   }
 
   /**
+   * Onboarding controls for development
+   */
+  static get enableOnboarding(): boolean {
+    return true; // Show onboarding even in dev mode
+  }
+
+  static get skipOnboardingInDev(): boolean {
+    return false; // Set to true to skip onboarding during development
+  }
+
+  /**
    * Conditional console logging - only logs in development
    */
   static log(...args: any[]): void {
